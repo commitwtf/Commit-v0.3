@@ -38,18 +38,6 @@ export default function Home() {
 				<Sidebar currentPath="/" />
 				<main className="flex-1 overflow-y-auto">
 					<div className="max-w-7xl mx-auto p-6">
-						{/* Promotional Banner */}
-						<div className="relative overflow-hidden bg-gradient-to-r from-[#1a5e1a] via-[#2ecc71] to-[#66ff66] rounded-lg p-6 mb-6">
-							<div className="relative z-10">
-								<h2 className="text-2xl font-bold mb-2 text-white">Commit x Phi x Cyber Campaign</h2>
-								<p className="mb-4 text-white/90">Join our exciting new campaign and earn exclusive rewards!</p>
-								<Button className="bg-white text-[#2ecc71] hover:bg-gray-100 hover:text-[#1a5e1a] transition-colors duration-300">
-									Learn More
-								</Button>
-							</div>
-							<div className="absolute top-0 right-0 w-64 h-64 bg-white/10 rounded-full -mr-32 -mt-32 blur-3xl"></div>
-							<div className="absolute bottom-0 left-0 w-64 h-64 bg-white/10 rounded-full -ml-32 -mb-32 blur-3xl"></div>
-						</div>
 
 						<div className="flex justify-between items-center mb-6">
 							<h1 className="text-2xl font-semibold text-gray-900 dark:text-white">Active Commits</h1>

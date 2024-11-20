@@ -5,8 +5,8 @@ interface CommitCardProps {
 	id: number
 	title: string
 	participants: number
-	stakeAmount: number
-	stakeToken: string
+	stakeAmount?: number
+	stakeToken?: string
 	timeRemaining: string
 }
 

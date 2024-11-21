@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import '@/src/styles/globals.css'
 import { MainLayout } from '@/src/components'
+import { WalletProvider } from '@/src/components/WalletProvider'
 
 export const metadata: Metadata = {
   title: 'Commit',
@@ -15,7 +16,9 @@ const RootLayout = ({
   return (
     <html lang='en'>
       <body>
-        <MainLayout>{children}</MainLayout>
+        <WalletProvider>
+          <MainLayout>{children}</MainLayout>
+        </WalletProvider>
       </body>
     </html>
   )

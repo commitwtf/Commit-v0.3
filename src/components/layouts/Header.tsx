@@ -3,6 +3,7 @@
 import { Menu, Wallet } from 'lucide-react'
 import { Button, Sheet, SheetContent, SheetTrigger, Logo, NavItems } from '@/src/components'
 import Link from 'next/link'
+import { ConnectButton } from '@rainbow-me/rainbowkit'
 
 export const Header = () => (
   <div className='flex flex-col sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
@@ -38,13 +39,59 @@ export const Header = () => (
         </Sheet>
         <Logo />
       </div>
-      <Button
-        variant='outline'
-        className='flex items-center gap-2 bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700 hover:bg-[#CECECE]'
-      >
-        <Wallet className='w-4 h-4' />
-        Connect wallet
-      </Button>
+      <ConnectButton.Custom>
+        {({
+          account,
+          chain,
+          openAccountModal,
+          openChainModal,
+          openConnectModal,
+          authenticationStatus,
+          mounted,
+        }) => {
+          if (!mounted || authenticationStatus === 'loading') {
+            return null;
+          }
+
+          const connected = account && chain &&
+            (!authenticationStatus || authenticationStatus === 'authenticated');
+
+          if (!connected) {
+            return (
+              <Button
+                variant='outline'
+                onClick={openConnectModal}
+                className='flex items-center gap-2 bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700 hover:bg-[#CECECE]'
+              >
+                <Wallet className='w-4 h-4' />
+                Connect wallet
+              </Button>
+            );
+          }
+
+          if (chain.unsupported) {
+            return (
+              <Button
+                variant='outline'
+                onClick={openChainModal}
+                className='flex items-center gap-2 bg-red-100 text-red-600 border-red-300 hover:bg-red-200'
+              >
+                Wrong network
+              </Button>
+            );
+          }
+
+          return (
+            <Button
+              variant='outline'
+              onClick={openAccountModal}
+              className='flex items-center gap-2 bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700 hover:bg-[#CECECE]'
+            >
+              {account.displayName}
+            </Button>
+          );
+        }}
+      </ConnectButton.Custom>
     </header>
   </div>
 )

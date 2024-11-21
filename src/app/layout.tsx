@@ -1,19 +1,21 @@
-import type { Metadata } from "next";
-import "@/src/assets/css/globals.css";
+import type { Metadata } from 'next'
+import '@/src/styles/globals.css'
 
 export const metadata: Metadata = {
-  title: "Commit",
-  description: "Onchain accountability protocol",
-};
+  title: 'Commit',
+  description: 'Onchain accountability protocol',
+}
 
-export default function RootLayout({
+const RootLayout = ({
   children,
 }: Readonly<{
-  children: React.ReactNode;
-}>) {
+  children: React.ReactNode
+}>) => {
   return (
-    <html lang="en">
+    <html lang='en'>
       <body>{children}</body>
     </html>
-  );
+  )
 }
+
+export default RootLayout

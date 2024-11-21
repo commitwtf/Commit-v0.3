@@ -1,9 +1,10 @@
-interface LogoProps {
-  isDark: boolean
-  toggleTheme: () => void
-}
+'use client'
 
-export const Logo = ({ isDark, toggleTheme }: LogoProps) => {
+import { useToogleTheme } from '@/src/hooks'
+
+export const Logo = () => {
+  const { isDark, toggleTheme } = useToogleTheme()
+
   return (
     <button onClick={toggleTheme} className='flex items-center'>
       <div className='w-12 h-6 bg-[#DCDCDC] rounded-full p-1 flex items-center cursor-pointer'>

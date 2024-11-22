@@ -4,27 +4,15 @@ import { useState } from 'react'
 import { CommitCard } from '@/src/components'
 import { AlertCircle } from 'lucide-react'
 
+interface Commit {
+  id: number;
+  title: string;
+  participants: number;
+  timeRemaining: string;
+}
+
 const ProfilePage = () => {
-  const [userCommits, setUserCommits] = useState([
-    {
-      id: 1,
-      title: 'Collect 5 Phi x Cyber campaign Creds',
-      participants: 245,
-      stakeAmount: 5,
-      stakeToken: 'CYBER',
-      timeRemaining: '02:15:30',
-      progress: 60,
-    },
-    {
-      id: 2,
-      title: 'Collect 10 Phi x Cyber campaign Creds',
-      participants: 157,
-      stakeAmount: 10,
-      stakeToken: 'CYBER',
-      timeRemaining: '01:45:20',
-      progress: 40,
-    },
-  ])
+  const [userCommits, setUserCommits] = useState<Commit[]>([])
 
   return (
     <main className='flex-1 overflow-y-auto'>

@@ -4,42 +4,37 @@ import { Home, Plus, Gift, BookOpen, HelpCircle } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
-interface NavItemsProps {}
-
-export const NavItems = ({}: NavItemsProps) => {
+export const NavItems = () => {
   const pathname = usePathname()
 
   return (
     <>
       <Link
         href='/'
-        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${
-          pathname === '/'
+        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${pathname === '/'
             ? 'bg-[#DCDCDC] text-gray-900'
             : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
-        }`}
+          }`}
       >
         <Home className='w-5 h-5' />
         Home
       </Link>
       <Link
         href='/create'
-        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${
-          pathname.includes('/create')
+        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${pathname.includes('/create')
             ? 'bg-[#DCDCDC] text-gray-900'
             : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
-        }`}
+          }`}
       >
         <Plus className='w-5 h-5' />
         Create
       </Link>
       <Link
         href='/rewards'
-        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${
-          pathname.includes('/rewards')
+        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${pathname.includes('/rewards')
             ? 'bg-[#DCDCDC] text-gray-900'
             : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
-        }`}
+          }`}
       >
         <Gift className='w-5 h-5' />
         Rewards

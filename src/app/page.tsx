@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from 'react'
 import { AlertCircle } from 'lucide-react'
-import { Header, Sidebar, CommitCard } from '@/src/components'
+import { CommitCard } from '@/src/components'
 
 const HomePage = () => {
   const [isDark, setIsDark] = useState(false)

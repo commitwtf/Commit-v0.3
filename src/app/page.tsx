@@ -2,49 +2,23 @@
 
 import { useState, useEffect } from 'react'
 import { AlertCircle } from 'lucide-react'
-import { CommitCard } from '@/src/components'
+import { CommitCard } from '@/components'
+import { useWalletGuard } from '@/hooks/useWalletGuard'
+import { useGetActiveCommitments } from '@/hooks/useCommit'
+import { WalletError } from '@/components'
 
 const HomePage = () => {
-  const [isDark, setIsDark] = useState(false)
+  const { error: walletError } = useWalletGuard()
+  const commits = useGetActiveCommitments()
 
-  useEffect(() => {
-    const isDarkMode = localStorage.getItem('darkMode') === 'true'
-    setIsDark(isDarkMode)
-    if (isDarkMode) {
-      document.documentElement.classList.add('dark')
-    }
-  }, [])
-
-  const toggleTheme = () => {
-    const newIsDark = !isDark
-    setIsDark(newIsDark)
-    localStorage.setItem('darkMode', newIsDark.toString())
-    document.documentElement.classList.toggle('dark')
-  }
-
-  const commits = [
-    {
-      id: 1,
-      title: 'Collect 5 Phi x Cyber campaign Creds',
-      participants: 245,
-      committedValue: 0.2,
-      timeRemaining: '02:15:30',
-    },
-    {
-      id: 2,
-      title: 'Collect 10 Phi x Cyber campaign Creds',
-      participants: 157,
-      committedValue: 0.5,
-      timeRemaining: '01:45:20',
-    },
-    {
-      id: 3,
-      title: 'Collect all Phi x Cyber campaign Creds',
-      participants: 89,
-      committedValue: 1.0,
-      timeRemaining: '00:59:59',
-    },
-  ]
+  // Helper function to format BigInt values
+  const formatCommitment = (commit: any) => ({
+    id: commit.id,
+    title: commit.description,
+    participants: Number(commit.participants),
+    committedValue: commit.stakeAmount ? Number(commit.stakeAmount) / 1e18 : 0, // Convert from wei to ETH
+    timeRemaining: commit.timeRemaining ? Number(commit.timeRemaining) : 0,
+  })
 
   return (
     <main className='flex-1 overflow-y-auto'>
@@ -58,6 +32,8 @@ const HomePage = () => {
           </div>
         </div>
 
+        <WalletError error={walletError} />
+
         <div className='bg-blue-50 dark:bg-blue-950/50 rounded-lg p-4 mb-6'>
           <div className='flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400'>
             <AlertCircle className='w-4 h-4' />
@@ -65,11 +41,19 @@ const HomePage = () => {
           </div>
         </div>
 
-        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-          {commits.map((commit) => (
-            <CommitCard key={commit.id} {...commit} />
-          ))}
-        </div>
+        {commits.length > 0 ? (
+          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+            {commits.map((commit) => (
+              <CommitCard key={commit.id} {...formatCommitment(commit)} />
+            ))}
+          </div>
+        ) : (
+          <div className='text-center py-12'>
+            <p className='text-gray-500 dark:text-gray-400'>
+              No active commits found.
+            </p>
+          </div>
+        )}
       </div>
     </main>
   )

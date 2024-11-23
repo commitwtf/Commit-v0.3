@@ -1,8 +1,47 @@
 'use client'
 
+import { useState } from 'react'
+import { useContractWrite } from 'wagmi'
+import { AlertCircle } from 'lucide-react'
 import { Button, Input, Textarea } from '@/src/components'
+import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 
 const CreateCommitPage = () => {
+  const { write: createCommitment, isLoading, isSuccess, data } = useContractWrite({
+    address: COMMIT_CONTRACT_ADDRESS,
+    abi: COMMIT_ABI,
+    functionName: 'createCommitment',
+  })
+
+  const [formData, setFormData] = useState({
+    tokenAddress: '',
+    stakeAmount: '',
+    joinFee: '',
+    description: '',
+    joinDeadline: '',
+    fulfillmentDeadline: ''
+  })
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    try {
+      await createCommitment({
+        args: [
+          formData.tokenAddress,
+          formData.stakeAmount,
+          formData.joinFee,
+          formData.description,
+          new Date(formData.joinDeadline).getTime() / 1000,
+          new Date(formData.fulfillmentDeadline).getTime() / 1000
+        ],
+        value: BigInt(1000000000000000)
+      })
+    } catch (error) {
+      console.error('Error creating commitment:', error)
+    }
+  }
+
   return (
     <main className='flex-1 overflow-y-auto'>
       <div className='max-w-3xl mx-auto p-6'>
@@ -49,7 +88,7 @@ const CreateCommitPage = () => {
               className='w-full bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700'
             />
           </div>
-          <div className='grid grid-cols-1 md:grid-cols-3 gap-4'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-4'>
             <div>
               <label
                 htmlFor='deadline'
@@ -60,22 +99,6 @@ const CreateCommitPage = () => {
               <Input
                 id='deadline'
                 type='datetime-local'
-                className='w-full bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700'
-              />
-            </div>
-            <div>
-              <label
-                htmlFor='creatorFee'
-                className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
-              >
-                Creator Fee
-              </label>
-              <Input
-                id='creatorFee'
-                type='number'
-                min='0'
-                step='0.01'
-                placeholder='1'
                 className='w-full bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700'
               />
             </div>

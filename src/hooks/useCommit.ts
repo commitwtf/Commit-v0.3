@@ -3,6 +3,25 @@ import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 
 import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 import { useState, useEffect } from 'react'
 
+interface CommitmentDetails {
+	creator: string
+	stakeAmount: bigint
+	joinFee: bigint
+	participants: bigint
+	description: string
+	status: number
+	timeRemaining: bigint
+}
+
+interface CreateCommitmentParams {
+	tokenAddress: string
+	stakeAmount: bigint
+	joinFee: bigint
+	description: string
+	joinDeadline: number
+	fulfillmentDeadline: number
+}
+
 // Get commitment details
 export function useGetCommitmentDetails(commitId: number) {
 	return useReadContract({
@@ -16,13 +35,13 @@ export function useGetCommitmentDetails(commitId: number) {
 // Create new commitment
 export function useCreateCommitment() {
 	const { writeContract, isPending } = useWriteContract()
-	const [hash, setHash] = useState<`0x${string}` | undefined>()
+	const [hash, setHash] = useState<string>()
 
 	const { data, isLoading: isConfirming, isSuccess } = useWaitForTransactionReceipt({
 		hash,
 	})
 
-	const createCommitment = async (params: any) => {
+	const createCommitment = async (params: CreateCommitmentParams) => {
 		try {
 			const tx = await writeContract({
 				address: COMMIT_CONTRACT_ADDRESS,
@@ -36,12 +55,9 @@ export function useCreateCommitment() {
 					params.joinDeadline,
 					params.fulfillmentDeadline
 				],
-				value: BigInt(1000000000000000) // 0.001 ETH creation fee
+				value: BigInt(1000000000000000)
 			})
-
-			if (tx) {
-				setHash(tx)
-			}
+			if (tx) setHash(tx)
 			return tx
 		} catch (error) {
 			console.error("Contract error:", error)
@@ -60,73 +76,85 @@ export function useCreateCommitment() {
 // Join commitment
 export function useJoinCommitment() {
 	const { writeContract, isPending } = useWriteContract()
+	const [hash, setHash] = useState<string>()
+
 	const { isLoading: isConfirming, isSuccess, data } = useWaitForTransactionReceipt({
-		hash: data?.hash,
+		hash,
 	})
 
-	const join = async (commitId: number, stakeAmount: string) => {
-		return writeContract({
+	const join = async (commitId: number, stakeAmount: bigint) => {
+		const tx = await writeContract({
 			address: COMMIT_CONTRACT_ADDRESS,
 			abi: COMMIT_ABI,
 			functionName: 'joinCommitment',
 			args: [commitId],
-			value: stakeAmount // Stake amount in ETH
+			value: stakeAmount
 		})
+		if (tx) setHash(tx)
+		return tx
 	}
 
 	return {
 		joinCommitment: join,
 		isLoading: isPending || isConfirming,
 		isSuccess,
-		txHash: data?.hash,
+		txHash: data?.transactionHash,
 	}
 }
 
 // Resolve commitment
 export function useResolveCommitment() {
 	const { writeContract, isPending } = useWriteContract()
+	const [hash, setHash] = useState<string>()
+
 	const { isLoading: isConfirming, isSuccess, data } = useWaitForTransactionReceipt({
-		hash: data?.hash,
+		hash,
 	})
 
 	const resolve = async (commitId: number) => {
-		return writeContract({
+		const tx = await writeContract({
 			address: COMMIT_CONTRACT_ADDRESS,
 			abi: COMMIT_ABI,
 			functionName: 'resolveCommitment',
 			args: [commitId]
 		})
+		if (tx) setHash(tx)
+		return tx
 	}
 
 	return {
 		resolveCommitment: resolve,
 		isLoading: isPending || isConfirming,
 		isSuccess,
-		txHash: data?.hash,
+		txHash: data?.transactionHash,
 	}
 }
 
 // Claim rewards
 export function useClaimRewards() {
 	const { writeContract, isPending } = useWriteContract()
+	const [hash, setHash] = useState<string>()
+
 	const { isLoading: isConfirming, isSuccess, data } = useWaitForTransactionReceipt({
-		hash: data?.hash,
+		hash,
 	})
 
 	const claim = async (commitId: number) => {
-		return writeContract({
+		const tx = await writeContract({
 			address: COMMIT_CONTRACT_ADDRESS,
 			abi: COMMIT_ABI,
 			functionName: 'claimRewards',
 			args: [commitId]
 		})
+		if (tx) setHash(tx)
+		return tx
 	}
 
 	return {
 		claimRewards: claim,
 		isLoading: isPending || isConfirming,
 		isSuccess,
-		txHash: data?.hash,
+		txHash: data?.transactionHash,
 	}
 }
 
@@ -152,7 +180,7 @@ export function useGetCommitmentWinners(commitId: number) {
 
 // Fetch active commitments
 export function useGetActiveCommitments() {
-	const [commitments, setCommitments] = useState<any[]>([])
+	const [commitments, setCommitments] = useState<CommitmentDetails[]>([])
 	const { data: commitCount } = useReadContract({
 		address: COMMIT_CONTRACT_ADDRESS,
 		abi: COMMIT_ABI,
@@ -172,7 +200,7 @@ export function useGetActiveCommitments() {
 					args: [i],
 				})
 
-				if (result.data && result.data[5] === 0) { 
+				if (result.data && result.data[5] === 0) {
 					commits.push({
 						id: i,
 						creator: result.data[0],
@@ -180,6 +208,7 @@ export function useGetActiveCommitments() {
 						joinFee: result.data[2],
 						participants: result.data[3],
 						description: result.data[4],
+						status: result.data[5],
 						timeRemaining: result.data[6]
 					})
 				}
@@ -195,7 +224,7 @@ export function useGetActiveCommitments() {
 
 // User's commitments 
 export function useUserCommitments(address: string) {
-	const [userCommits, setUserCommits] = useState<any[]>([])
+	const [userCommits, setUserCommits] = useState<CommitmentDetails[]>([])
 	const { data: commitCount } = useReadContract({
 		address: COMMIT_CONTRACT_ADDRESS,
 		abi: COMMIT_ABI,
@@ -224,7 +253,13 @@ export function useUserCommitments(address: string) {
 					})
 					commits.push({
 						id: i,
-						...detailsResult.data
+						creator: detailsResult.data[0],
+						stakeAmount: detailsResult.data[1],
+						joinFee: detailsResult.data[2],
+						participants: detailsResult.data[3],
+						description: detailsResult.data[4],
+						status: detailsResult.data[5],
+						timeRemaining: detailsResult.data[6]
 					})
 				}
 			}
@@ -236,3 +271,4 @@ export function useUserCommitments(address: string) {
 
 	return userCommits
 }
+

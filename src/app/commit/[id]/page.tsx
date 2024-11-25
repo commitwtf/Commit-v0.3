@@ -2,6 +2,7 @@
 import { Button } from '@/components'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import {
+  getCommitmentDeadlines,
   useCommitmentToken,
   useGetCommitmentDetails,
   useJoinCommitment,
@@ -20,8 +21,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
   if (isLoading) return <div>Loading...</div>
   if (isError || !data) return <div>Error loading commitment</div>
 
-  const { creator, stakeAmount, creatorFee, participants, description, status, timeRemaining } =
-    data
+  const { creator, stakeAmount, creatorFee, participants, description, status } = data
 
   return (
     <div>
@@ -36,9 +36,20 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
       <p>Participants: {participants?.length}</p>
       <p>Description: {description}</p>
       <p>Status: {status}</p>
-      <p>Time Remaining: {formatSecondsToDays(timeRemaining)} seconds</p>
+      <TimeRemaining commitId={id} />
 
       <JoinCommitmentButton commitId={id} stakeAmount={stakeAmount.value + creatorFee.value} />
+    </div>
+  )
+}
+
+function TimeRemaining({ commitId = '' }) {
+  const { data: deadlines } = getCommitmentDeadlines(commitId)
+  if (!deadlines?.length) return null
+  return (
+    <div>
+      <p>Time Remaining: {formatSecondsToDays(deadlines[0])}</p>
+      <p>Fulfillment Remaining: {formatSecondsToDays(deadlines[1])}</p>
     </div>
   )
 }

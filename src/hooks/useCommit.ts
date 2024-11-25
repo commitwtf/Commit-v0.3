@@ -1,5 +1,10 @@
 'use client'
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import {
+  useReadContract,
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useReadContracts,
+} from 'wagmi'
 import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 import { useState, useEffect } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
@@ -91,6 +96,30 @@ export function useGetCommitmentDetails(commitId: number) {
         .then((r) => r.data?.commitments.map(mapCommitment))
         .then((r) => r?.[0] || null),
   })
+}
+
+export function getCommitmentDeadlines(commitId: string) {
+  const { data, ...rest } = useReadContracts({
+    contracts: [
+      {
+        address: COMMIT_CONTRACT_ADDRESS,
+        abi: COMMIT_ABI,
+        functionName: 'getCommitmentJoinDeadline',
+        args: [BigInt(commitId)],
+      },
+      {
+        address: COMMIT_CONTRACT_ADDRESS,
+        abi: COMMIT_ABI,
+        functionName: 'getCommitmentFulfillmentDeadline',
+        args: [BigInt(commitId)],
+      },
+    ],
+  })
+
+  return {
+    ...rest,
+    data: data?.map((d) => Number(d.result ?? 0) * 1000),
+  }
 }
 
 // Create new commitment

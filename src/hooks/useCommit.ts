@@ -4,6 +4,7 @@ import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 import { useState, useEffect } from 'react'
 
 interface CommitmentDetails {
+	id: number
 	creator: string
 	stakeAmount: bigint
 	joinFee: bigint
@@ -181,42 +182,50 @@ export function useGetCommitmentWinners(commitId: number) {
 // Fetch active commitments
 export function useGetActiveCommitments() {
 	const [commitments, setCommitments] = useState<CommitmentDetails[]>([])
+
+	// Get total number of commitments
 	const { data: commitCount } = useReadContract({
 		address: COMMIT_CONTRACT_ADDRESS,
 		abi: COMMIT_ABI,
 		functionName: 'nextCommitmentId'
 	})
 
-	useEffect(() => {
-		const fetchCommitments = async () => {
-			if (!commitCount) return
+	// Get all commitments
+	const fetchCommitmentDetails = async (id: number) => {
+		const { data } = await useReadContract({
+			address: COMMIT_CONTRACT_ADDRESS,
+			abi: COMMIT_ABI,
+			functionName: 'getCommitmentDetails',
+			args: [id],
+		})
+		return data
+	}
 
+	useEffect(() => {
+		if (!commitCount) return
+
+		const fetchAllCommitments = async () => {
 			const commits = []
 			for (let i = 0; i < Number(commitCount); i++) {
-				const result = await useReadContract({
-					address: COMMIT_CONTRACT_ADDRESS,
-					abi: COMMIT_ABI,
-					functionName: 'getCommitmentDetails',
-					args: [i],
-				})
-
-				if (result.data && result.data[5] === 0) {
+				const details = await fetchCommitmentDetails(i)
+				// Only add active commitments (status === 0)
+				if (details && details[5] === 0) {
 					commits.push({
 						id: i,
-						creator: result.data[0],
-						stakeAmount: result.data[1],
-						joinFee: result.data[2],
-						participants: result.data[3],
-						description: result.data[4],
-						status: result.data[5],
-						timeRemaining: result.data[6]
+						creator: details[0],
+						stakeAmount: details[1],
+						joinFee: details[2],
+						participants: details[3],
+						description: details[4],
+						status: details[5],
+						timeRemaining: details[6]
 					})
 				}
 			}
 			setCommitments(commits)
 		}
 
-		fetchCommitments()
+		fetchAllCommitments()
 	}, [commitCount])
 
 	return commitments

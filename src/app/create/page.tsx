@@ -16,6 +16,7 @@ const CreateCommitPage = () => {
   const [formData, setFormData] = useState({
     tokenAddress: '',
     stakeAmount: '',
+    creatorFee: '',
     joinFee: '',
     description: '',
     joinDeadline: '',
@@ -30,7 +31,7 @@ const CreateCommitPage = () => {
         args: [
           formData.tokenAddress,
           formData.stakeAmount,
-          formData.joinFee,
+          formData.creatorFee,
           formData.description,
           new Date(formData.joinDeadline).getTime() / 1000,
           new Date(formData.fulfillmentDeadline).getTime() / 1000
@@ -118,6 +119,22 @@ const CreateCommitPage = () => {
                 className='w-full bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700'
               />
             </div>
+          </div>
+          <div>
+            <label
+              htmlFor='creatorFee'
+              className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1'
+            >
+              Creator Fee
+            </label>
+            <Input
+              id='creatorFee'
+              type='number'
+              min='0'
+              step='0.01'
+              placeholder='1'
+              className='w-full bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700'
+            />
           </div>
           <p className='text-sm text-gray-500 dark:text-gray-400'>
             Note: to prevent spam, creating commit costs 0.001ETH. Thank you for your support. Let's

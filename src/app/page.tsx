@@ -2,14 +2,16 @@
 
 import { useState, useEffect } from 'react'
 import { AlertCircle } from 'lucide-react'
-import { CommitCard } from '@/components'
+import { CommitCard } from '@/src/components'
 import { useWalletGuard } from '@/hooks/useWalletGuard'
-import { useGetActiveCommitments } from '@/hooks/useCommit'
+import { useGetActiveCommitments, useCreateCommitment } from '@/hooks/useCommit'
 import { WalletError } from '@/components'
 
 const HomePage = () => {
   const { error: walletError } = useWalletGuard()
   const commits = useGetActiveCommitments()
+  const { createCommitment, isLoading } = useCreateCommitment()
+
 
   // Helper function to format BigInt values
   const formatCommitment = (commit: any) => ({

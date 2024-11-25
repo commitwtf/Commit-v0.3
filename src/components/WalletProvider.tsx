@@ -10,19 +10,30 @@ import {
 import { WagmiProvider } from 'wagmi';
 import { http } from 'wagmi';
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { base } from 'wagmi/chains';
+import { useState, useEffect } from 'react';
+
+const queryClient = new QueryClient();
 
 const config = getDefaultConfig({
     appName: 'Commit',
     projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
-    chains: [base],
+    chains: [{
+        id: 7560,
+        name: 'Cyber',
+        nativeCurrency: {
+            decimals: 18,
+            symbol: 'ETH',
+        },
+        rpcUrls: {
+            default: { http: ['https://cyber.alt.technology'] }
+        }
+    }],
     transports: {
-        [base.id]: http(process.env.NEXT_PUBLIC_BASE_RPC_URL!),
+        7560: http('https://cyber.alt.technology'),
     },
-    ssr: true
+    ssr: true,
+    enableCoolMode: true,
 });
-
-const queryClient = new QueryClient();
 
 const rainbowKitTheme = {
     lightMode: lightTheme({
@@ -38,6 +49,12 @@ const rainbowKitTheme = {
 };
 
 export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
+    const [mounted, setMounted] = useState(false);
+
+    useEffect(() => {
+        setMounted(true);
+    }, []);
+
     return (
         <WagmiProvider config={config}>
             <QueryClientProvider client={queryClient}>
@@ -45,7 +62,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
                     theme={rainbowKitTheme}
                     modalSize="compact"
                 >
-                    {children}
+                    {mounted && children}
                 </RainbowKitProvider>
             </QueryClientProvider>
         </WagmiProvider>

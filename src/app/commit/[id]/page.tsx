@@ -26,23 +26,19 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
   return (
     <div>
       <h1>Commitment #{id}</h1>
-      <p>Creator: {creator}</p>
+      <p>Creator: {creator?.address}</p>
       <p>
         Stake Amount: {stakeAmount.formatted} {stakeAmount.token}
       </p>
       <p>
         Join Fee: {creatorFee.formatted} {creatorFee.token}
       </p>
-      <p>Participants: {participants}</p>
+      <p>Participants: {participants?.length}</p>
       <p>Description: {description}</p>
       <p>Status: {status}</p>
       <p>Time Remaining: {formatSecondsToDays(timeRemaining)} seconds</p>
 
-      <JoinCommitmentButton
-        commitId={id}
-        // creatorFee={creatorFee.value}
-        stakeAmount={stakeAmount.value + creatorFee.value}
-      />
+      <JoinCommitmentButton commitId={id} stakeAmount={stakeAmount.value + creatorFee.value} />
     </div>
   )
 }
@@ -52,7 +48,7 @@ function JoinCommitmentButton({
   stakeAmount,
 }: {
   commitId: string
-  stakeAmount: number
+  stakeAmount: bigint
 }) {
   const { address } = useAccount()
   const queryClient = useQueryClient()

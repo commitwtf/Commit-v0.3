@@ -78,17 +78,19 @@ const COMMITMENTS_QUERY = gql`
 
 // Get commitment details
 export function useGetCommitmentDetails(commitId: number) {
-  const { data, ...rest } = useReadContract({
-    address: COMMIT_CONTRACT_ADDRESS,
-    abi: COMMIT_ABI,
-    functionName: 'getCommitmentDetails',
-    args: [BigInt(commitId)],
+  return useQuery({
+    queryKey: ['commitments', 'active'],
+    queryFn: () =>
+      client
+        .query<{
+          commitments: CommitmentGraphQL[]
+        }>(COMMITMENTS_QUERY, {
+          where: { id_in: [commitId] },
+        })
+        .toPromise()
+        .then((r) => r.data?.commitments.map(mapCommitment))
+        .then((r) => r?.[0] || null),
   })
-
-  return {
-    ...rest,
-    data: data ? formatCommitment(commitId, data) : null,
-  }
 }
 
 // Create new commitment

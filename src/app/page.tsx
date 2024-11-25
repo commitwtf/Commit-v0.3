@@ -9,7 +9,7 @@ import { WalletError } from '@/components'
 
 const HomePage = () => {
   const { error: walletError } = useWalletGuard()
-  const commits = useGetActiveCommitments()
+  const {data: commits = []} = useGetActiveCommitments()
   const { createCommitment, isLoading } = useCreateCommitment()
 
 

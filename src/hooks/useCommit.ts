@@ -1,7 +1,8 @@
 'use client'
-import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
+import { useReadContract, useWriteContract, useWaitForTransactionReceipt, usePublicClient } from 'wagmi'
 import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 import { useState, useEffect } from 'react'
+import { useQuery } from '@tanstack/react-query'
 
 interface CommitmentDetails {
 	id: number
@@ -181,54 +182,42 @@ export function useGetCommitmentWinners(commitId: number) {
 
 // Fetch active commitments
 export function useGetActiveCommitments() {
-	const [commitments, setCommitments] = useState<CommitmentDetails[]>([])
+	const client = usePublicClient()
 
 	// Get total number of commitments
 	const { data: commitCount } = useReadContract({
-		address: COMMIT_CONTRACT_ADDRESS,
-		abi: COMMIT_ABI,
-		functionName: 'nextCommitmentId'
+	  address: COMMIT_CONTRACT_ADDRESS,
+	  abi: COMMIT_ABI,
+	  functionName: 'nextCommitmentId',
 	})
-
-	// Get all commitments
-	const fetchCommitmentDetails = async (id: number) => {
-		const { data } = await useReadContract({
-			address: COMMIT_CONTRACT_ADDRESS,
-			abi: COMMIT_ABI,
-			functionName: 'getCommitmentDetails',
-			args: [id],
-		})
-		return data
-	}
-
-	useEffect(() => {
-		if (!commitCount) return
-
-		const fetchAllCommitments = async () => {
-			const commits = []
-			for (let i = 0; i < Number(commitCount); i++) {
-				const details = await fetchCommitmentDetails(i)
-				// Only add active commitments (status === 0)
-				if (details && details[5] === 0) {
-					commits.push({
-						id: i,
-						creator: details[0],
-						stakeAmount: details[1],
-						joinFee: details[2],
-						participants: details[3],
-						description: details[4],
-						status: details[5],
-						timeRemaining: details[6]
-					})
-				}
-			}
-			setCommitments(commits)
-		}
-
-		fetchAllCommitments()
-	}, [commitCount])
-
-	return commitments
+  
+	return useQuery({
+	  queryKey: ['commitments', 'active', Number(commitCount)],
+	  queryFn: async () =>
+		Promise.all(
+		  Array.from({ length: Number(commitCount) })
+			.fill(0)
+			.map((_, id) =>
+			  client
+				?.readContract({
+				  address: COMMIT_CONTRACT_ADDRESS,
+				  abi: COMMIT_ABI,
+				  functionName: 'getCommitmentDetails',
+				  args: [BigInt(id)],
+				})
+				.then((details) => ({
+				  id,
+				  creator: details[0],
+				  stakeAmount: details[1],
+				  joinFee: details[2],
+				  participants: details[3],
+				  description: details[4],
+				  status: details[5],
+				  timeRemaining: details[6],
+				}))
+			)
+		),
+	})
 }
 
 // User's commitments 

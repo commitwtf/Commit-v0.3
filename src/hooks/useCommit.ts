@@ -16,7 +16,8 @@ import { gql } from 'graphql-tag'
 export interface CommitmentDetails {
   id: number
   creator: string
-  stakeAmount: { formatted: string; value: bigint; token: string }
+  stakeAmount: { formatted: string; value: bigint; token: Address }
+  creatorFee: { formatted: string; value: bigint; token: Address }
   joinFee: number
   participants: Address[]
   description: string
@@ -313,12 +314,12 @@ function mapCommitment(commitment: CommitmentGraphQL) {
     stakeAmount: {
       value: stakeAmount,
       formatted: formatUnits(stakeAmount, 18),
-      token: 'ETH',
+      token: commitment.tokenAddress,
     },
     creatorFee: {
       value: creatorFee,
       formatted: formatUnits(creatorFee, 18),
-      token: 'ETH',
+      token: commitment.tokenAddress,
     },
   }
 }

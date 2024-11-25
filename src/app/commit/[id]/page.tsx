@@ -1,5 +1,6 @@
 'use client'
 import { Button } from '@/components'
+import { TokenAmount } from '@/components/TokenAmount'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import {
   getCommitmentDeadlines,
@@ -9,7 +10,7 @@ import {
   useJoinFee,
 } from '@/hooks/useCommit'
 import { useAllowance, useApprove } from '@/hooks/useToken'
-import { formatSecondsToDays, toNow } from '@/utils/date'
+import { formatSecondsToDays } from '@/utils/date'
 import { useQueryClient } from '@tanstack/react-query'
 import { use } from 'react'
 import { useAccount } from 'wagmi'
@@ -28,10 +29,11 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
       <h1>Commitment #{id}</h1>
       <p>Creator: {creator?.address}</p>
       <p>
-        Stake Amount: {stakeAmount.formatted} {stakeAmount.token}
+        Stake Amount: <TokenAmount {...stakeAmount} />
       </p>
       <p>
-        Join Fee: {creatorFee.formatted} {creatorFee.token}
+        Join Fee:
+        <TokenAmount {...creatorFee} />
       </p>
       <p>Participants: {participants?.length}</p>
       <p>Description: {description}</p>

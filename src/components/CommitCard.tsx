@@ -2,6 +2,7 @@ import { CommitmentDetails } from '@/hooks/useCommit'
 import { formatSecondsToDays } from '@/utils/date'
 import { Users, Timer } from 'lucide-react'
 import Link from 'next/link'
+import { TokenAmount } from './TokenAmount'
 
 export function CommitCard({
   id,
@@ -22,7 +23,7 @@ export function CommitCard({
           </div>
           <div className='text-gray-600 dark:text-gray-400'>
             <span className='text-sm font-medium'>
-              {stakeAmount?.formatted} {stakeAmount?.token} stake
+              <TokenAmount {...stakeAmount} /> stake
             </span>
           </div>
         </div>

@@ -40,7 +40,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
       <p>Status: {status}</p>
       <TimeRemaining commitId={id} />
 
-      <JoinCommitmentButton commitId={id} stakeAmount={stakeAmount.value + creatorFee.value} />
+      <JoinCommitmentButton commitId={id} stakeAmount={stakeAmount?.value + creatorFee?.value} />
     </div>
   )
 }

@@ -1,6 +1,6 @@
 'use client'
 
-import { Home, Plus, Gift, BookOpen, HelpCircle } from 'lucide-react'
+import { Home, Plus, Gift, BookOpen, HelpCircle, User } from 'lucide-react'
 import Link from 'next/link'
 import { usePathname } from 'next/navigation'
 
@@ -11,33 +11,40 @@ export const NavItems = () => {
     <>
       <Link
         href='/'
-        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${
-          pathname === '/'
-            ? 'bg-[#DCDCDC] text-gray-900'
-            : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
-        }`}
+        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${pathname === '/'
+          ? 'bg-[#DCDCDC] text-gray-900'
+          : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
+          }`}
       >
         <Home className='w-5 h-5' />
         Home
       </Link>
       <Link
+        href='/profile'
+        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${pathname === '/profile'
+          ? 'bg-[#DCDCDC] text-gray-900'
+          : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
+          }`}
+      >
+        <User className='w-5 h-5' />
+        Profile
+      </Link>
+      <Link
         href='/create'
-        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${
-          pathname.includes('/create')
-            ? 'bg-[#DCDCDC] text-gray-900'
-            : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
-        }`}
+        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${pathname.includes('/create')
+          ? 'bg-[#DCDCDC] text-gray-900'
+          : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
+          }`}
       >
         <Plus className='w-5 h-5' />
         Create
       </Link>
       <Link
         href='/rewards'
-        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${
-          pathname.includes('/rewards')
-            ? 'bg-[#DCDCDC] text-gray-900'
-            : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
-        }`}
+        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${pathname.includes('/rewards')
+          ? 'bg-[#DCDCDC] text-gray-900'
+          : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
+          }`}
       >
         <Gift className='w-5 h-5' />
         Rewards

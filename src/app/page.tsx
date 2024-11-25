@@ -1,6 +1,5 @@
 'use client'
 
-import { useState, useEffect } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { CommitCard } from '@/src/components'
 import { useWalletGuard } from '@/hooks/useWalletGuard'
@@ -10,17 +9,6 @@ import { WalletError } from '@/components'
 const HomePage = () => {
   const { error: walletError } = useWalletGuard()
   const { data: commits = [] } = useGetActiveCommitments()
-  const { createCommitment, isLoading } = useCreateCommitment()
-
-  // Helper function to format BigInt values
-  const formatCommitment = (commit: any) => ({
-    id: commit.id,
-    title: commit.description,
-    participants: Number(commit.participants),
-    committedValue: commit.stakeAmount ? Number(commit.stakeAmount) / 1e18 : 0, // Convert from wei to ETH
-    timeRemaining: commit.timeRemaining ? Number(commit.timeRemaining) : 0,
-  })
-
   return (
     <main className='flex-1 overflow-y-auto'>
       <div className='max-w-7xl mx-auto p-6'>
@@ -45,7 +33,7 @@ const HomePage = () => {
         {commits.length > 0 ? (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
             {commits.map((commit) => (
-              <CommitCard key={commit.id} {...formatCommitment(commit)} />
+              <CommitCard key={commit.id} {...commit} />
             ))}
           </div>
         ) : (

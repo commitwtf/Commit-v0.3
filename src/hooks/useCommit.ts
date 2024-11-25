@@ -7,17 +7,19 @@ import {
 } from 'wagmi'
 import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 import { useState, useEffect } from 'react'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation, useQuery } from '@tanstack/react-query'
+import { useWaitForEvent } from './useWaitForEvent'
+import { formatEther, formatUnits, getAddress } from 'viem'
 
-interface CommitmentDetails {
+export interface CommitmentDetails {
   id: number
   creator: string
-  stakeAmount: bigint
-  joinFee: bigint
-  participants: bigint
+  stakeAmount: { formatted: string; value: bigint; token: string }
+  joinFee: number
+  participants: number
   description: string
   status: number
-  timeRemaining: bigint
+  timeRemaining: number
 }
 
 interface CreateCommitmentParams {
@@ -31,12 +33,17 @@ interface CreateCommitmentParams {
 
 // Get commitment details
 export function useGetCommitmentDetails(commitId: number) {
-  return useReadContract({
+  const { data, ...rest } = useReadContract({
     address: COMMIT_CONTRACT_ADDRESS,
     abi: COMMIT_ABI,
     functionName: 'getCommitmentDetails',
-    args: [commitId],
+    args: [BigInt(commitId)],
   })
+
+  return {
+    ...rest,
+    data: data ? formatCommitment(commitId, data) : null,
+  }
 }
 
 // Create new commitment
@@ -86,35 +93,19 @@ export function useCreateCommitment() {
 
 // Join commitment
 export function useJoinCommitment() {
-  const { writeContract, isPending } = useWriteContract()
-  const [hash, setHash] = useState<string>()
+  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const { writeContractAsync } = useWriteContract()
 
-  const {
-    isLoading: isConfirming,
-    isSuccess,
-    data,
-  } = useWaitForTransactionReceipt({
-    hash,
+  return useMutation({
+    mutationFn: async (params: { commitId: string; stakeAmount: number }) =>
+      writeContractAsync({
+        address: COMMIT_CONTRACT_ADDRESS,
+        abi: COMMIT_ABI,
+        functionName: 'joinCommitment',
+        args: [BigInt(params.commitId)],
+        value: BigInt(params.stakeAmount),
+      }).then((hash) => waitForEvent(hash, 'CommitmentJoined')),
   })
-
-  const join = async (commitId: number, stakeAmount: bigint) => {
-    const tx = await writeContract({
-      address: COMMIT_CONTRACT_ADDRESS,
-      abi: COMMIT_ABI,
-      functionName: 'joinCommitment',
-      args: [commitId],
-      value: stakeAmount,
-    })
-    if (tx) setHash(tx)
-    return tx
-  }
-
-  return {
-    joinCommitment: join,
-    isLoading: isPending || isConfirming,
-    isSuccess,
-    txHash: data?.transactionHash,
-  }
 }
 
 // Resolve commitment
@@ -226,19 +217,32 @@ export function useGetActiveCommitments() {
                 functionName: 'getCommitmentDetails',
                 args: [BigInt(id)],
               })
-              .then((details) => ({
-                id,
-                creator: details[0],
-                stakeAmount: details[1],
-                joinFee: details[2],
-                participants: details[3],
-                description: details[4],
-                status: details[5],
-                timeRemaining: details[6],
-              }))
+              .then((details) => formatCommitment(id, details))
           )
       ),
   })
+}
+
+function formatCommitment(id: number, details: readonly any[]) {
+  // TODO: Decimals should be fetched from token
+  const stakeAmount = details[1] ?? 0
+  const timeRemaining = Number(details[6] ?? 0)
+
+  return {
+    id,
+    creator: details[0],
+    stakeAmount: {
+      value: stakeAmount,
+      formatted: formatUnits(stakeAmount, 18),
+      token: 'ETH',
+    },
+    joinFee: details[2],
+    participants: Number(details[3]),
+    description: details[4],
+    status: details[5],
+    timeRemaining,
+    // committedValue,
+  }
 }
 
 // User's commitments

@@ -9,9 +9,8 @@ import { WalletError } from '@/components'
 
 const HomePage = () => {
   const { error: walletError } = useWalletGuard()
-  const {data: commits = []} = useGetActiveCommitments()
+  const { data: commits = [] } = useGetActiveCommitments()
   const { createCommitment, isLoading } = useCreateCommitment()
-
 
   // Helper function to format BigInt values
   const formatCommitment = (commit: any) => ({
@@ -51,9 +50,7 @@ const HomePage = () => {
           </div>
         ) : (
           <div className='text-center py-12'>
-            <p className='text-gray-500 dark:text-gray-400'>
-              No active commits found.
-            </p>
+            <p className='text-gray-500 dark:text-gray-400'>No active commits found.</p>
           </div>
         )}
       </div>

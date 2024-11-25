@@ -5,10 +5,10 @@ import { CommitCard } from '@/src/components'
 import { AlertCircle } from 'lucide-react'
 
 interface Commit {
-  id: number;
-  title: string;
-  participants: number;
-  timeRemaining: string;
+  id: number
+  title: string
+  participants: number
+  timeRemaining: string
 }
 
 const ProfilePage = () => {

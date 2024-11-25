@@ -9,7 +9,7 @@ interface IStoreContext {
 
 const StoreContext = createContext<IStoreContext>({
   isDark: false,
-  toggleTheme: () => { },
+  toggleTheme: () => {},
 })
 
 export const StoreContextProvider = ({ children }: PropsWithChildren) => {

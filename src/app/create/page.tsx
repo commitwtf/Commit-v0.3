@@ -7,7 +7,12 @@ import { Button, Input, Textarea } from '@/src/components'
 import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 
 const CreateCommitPage = () => {
-  const { write: createCommitment, isLoading, isSuccess, data } = useContractWrite({
+  const {
+    write: createCommitment,
+    isLoading,
+    isSuccess,
+    data,
+  } = useContractWrite({
     address: COMMIT_CONTRACT_ADDRESS,
     abi: COMMIT_ABI,
     functionName: 'createCommitment',
@@ -20,7 +25,7 @@ const CreateCommitPage = () => {
     joinFee: '',
     description: '',
     joinDeadline: '',
-    fulfillmentDeadline: ''
+    fulfillmentDeadline: '',
   })
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -34,9 +39,9 @@ const CreateCommitPage = () => {
           formData.creatorFee,
           formData.description,
           new Date(formData.joinDeadline).getTime() / 1000,
-          new Date(formData.fulfillmentDeadline).getTime() / 1000
+          new Date(formData.fulfillmentDeadline).getTime() / 1000,
         ],
-        value: BigInt(1000000000000000)
+        value: BigInt(1000000000000000),
       })
     } catch (error) {
       console.error('Error creating commitment:', error)

@@ -108,6 +108,15 @@ export function useJoinCommitment() {
   })
 }
 
+export function useCommitmentToken(commitId: string) {
+  return useReadContract({
+    address: COMMIT_CONTRACT_ADDRESS,
+    abi: COMMIT_ABI,
+    functionName: 'getCommitmentTokenAddress',
+    args: [BigInt(commitId)],
+  })
+}
+
 // Resolve commitment
 export function useResolveCommitment() {
   const { writeContract, isPending } = useWriteContract()

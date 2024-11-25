@@ -1,8 +1,12 @@
 'use client'
 import { Button } from '@/components'
-import { useGetCommitmentDetails, useJoinCommitment } from '@/hooks/useCommit'
+import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
+import { useCommitmentToken, useGetCommitmentDetails, useJoinCommitment } from '@/hooks/useCommit'
+import { useAllowance, useApprove } from '@/hooks/useToken'
 import { formatSecondsToDays, toNow } from '@/utils/date'
+import { useQueryClient } from '@tanstack/react-query'
 import { use } from 'react'
+import { useAccount } from 'wagmi'
 
 export default function CommitmentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -36,8 +40,28 @@ function JoinCommitmentButton({
   commitId: string
   stakeAmount: number
 }) {
-  const { data, mutate, isPending } = useJoinCommitment()
-  console.log(data)
+  const { address } = useAccount()
+  const queryClient = useQueryClient()
+  const { data: token } = useCommitmentToken(commitId)
+  const { mutate, isPending } = useJoinCommitment()
+
+  const { data: allowance = 0, queryKey } = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
+  const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)
+
+  if (allowance < stakeAmount)
+    return (
+      <Button
+        isLoading={approve.isPending}
+        onClick={() =>
+          approve.writeContractAsync(BigInt(stakeAmount)).then(() => {
+            void queryClient.invalidateQueries({ queryKey })
+          })
+        }
+      >
+        Approve
+      </Button>
+    )
+
   return (
     <Button isLoading={isPending} onClick={() => mutate({ commitId, stakeAmount })}>
       Join

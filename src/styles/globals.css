@@ -5,11 +5,11 @@
 @layer base {
   @font-face {
     font-family: Geist Mono;
-    src: url(/assets/fonts/GeistMonoVF.woff) format("woff");
+    src: url(/assets/fonts/GeistMonoVF.woff) format('woff');
   }
   @font-face {
     font-family: Geist;
-    src: url(/assets/fonts/GeistVF.woff) format("woff");
+    src: url(/assets/fonts/GeistVF.woff) format('woff');
   }
   :root {
     --background: 0 0% 100%;

@@ -50,11 +50,11 @@ export const Header = () => (
           mounted,
         }) => {
           if (!mounted || authenticationStatus === 'loading') {
-            return null;
+            return null
           }
 
-          const connected = account && chain &&
-            (!authenticationStatus || authenticationStatus === 'authenticated');
+          const connected =
+            account && chain && (!authenticationStatus || authenticationStatus === 'authenticated')
 
           if (!connected) {
             return (
@@ -66,7 +66,7 @@ export const Header = () => (
                 <Wallet className='w-4 h-4' />
                 Connect wallet
               </Button>
-            );
+            )
           }
 
           if (chain.unsupported) {
@@ -78,7 +78,7 @@ export const Header = () => (
               >
                 Wrong network
               </Button>
-            );
+            )
           }
 
           return (
@@ -89,7 +89,7 @@ export const Header = () => (
             >
               {account.displayName}
             </Button>
-          );
+          )
         }}
       </ConnectButton.Custom>
     </header>

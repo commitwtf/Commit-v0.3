@@ -1,7 +1,8 @@
-import { CommitmentDetails } from '@/hooks/useCommit'
+import { CommitmentDetails, getCommitmentDeadlines } from '@/hooks/useCommit'
 import { formatSecondsToDays } from '@/utils/date'
 import { Users, Timer } from 'lucide-react'
 import Link from 'next/link'
+import { TokenAmount } from './TokenAmount'
 
 export function CommitCard({
   id,
@@ -18,20 +19,26 @@ export function CommitCard({
         <div className='flex items-center justify-between mb-4'>
           <div className='flex items-center gap-2 text-gray-600 dark:text-gray-400'>
             <Users className='w-4 h-4' />
-            <span className='text-sm'>{participants} participants</span>
+            <span className='text-sm'>{participants?.length} participants</span>
           </div>
           <div className='text-gray-600 dark:text-gray-400'>
             <span className='text-sm font-medium'>
-              {stakeAmount?.formatted} {stakeAmount?.token} stake
+              <TokenAmount {...stakeAmount} /> stake
             </span>
           </div>
         </div>
 
         <div className='flex items-center gap-2 text-gray-600 dark:text-gray-400'>
           <Timer className='w-4 h-4' />
-          <span className='text-sm'>{formatSecondsToDays(timeRemaining)} left</span>
+          <TimeRemaining commitId={id} />
         </div>
       </div>
     </Link>
   )
+}
+
+function TimeRemaining({ commitId }: { commitId: number }) {
+  const { data: deadlines } = getCommitmentDeadlines(String(commitId))
+  if (!deadlines?.length) return null
+  return <span className='text-sm'>{formatSecondsToDays(deadlines[0])} left</span>
 }

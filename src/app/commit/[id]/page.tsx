@@ -1,14 +1,16 @@
 'use client'
 import { Button } from '@/components'
+import { TokenAmount } from '@/components/TokenAmount'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import {
+  getCommitmentDeadlines,
   useCommitmentToken,
   useGetCommitmentDetails,
   useJoinCommitment,
   useJoinFee,
 } from '@/hooks/useCommit'
 import { useAllowance, useApprove } from '@/hooks/useToken'
-import { formatSecondsToDays, toNow } from '@/utils/date'
+import { formatSecondsToDays } from '@/utils/date'
 import { useQueryClient } from '@tanstack/react-query'
 import { use } from 'react'
 import { useAccount } from 'wagmi'
@@ -20,29 +22,36 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
   if (isLoading) return <div>Loading...</div>
   if (isError || !data) return <div>Error loading commitment</div>
 
-  const { creator, stakeAmount, creatorFee, participants, description, status, timeRemaining } =
-    data
+  const { creator, stakeAmount, creatorFee, participants, description, status } = data
 
   return (
     <div>
       <h1>Commitment #{id}</h1>
-      <p>Creator: {creator}</p>
+      <p>Creator: {creator?.address}</p>
       <p>
-        Stake Amount: {stakeAmount.formatted} {stakeAmount.token}
+        Stake Amount: <TokenAmount {...stakeAmount} />
       </p>
       <p>
-        Join Fee: {creatorFee.formatted} {creatorFee.token}
+        Join Fee:
+        <TokenAmount {...creatorFee} />
       </p>
-      <p>Participants: {participants}</p>
+      <p>Participants: {participants?.length}</p>
       <p>Description: {description}</p>
       <p>Status: {status}</p>
-      <p>Time Remaining: {formatSecondsToDays(timeRemaining)} seconds</p>
+      <TimeRemaining commitId={id} />
 
-      <JoinCommitmentButton
-        commitId={id}
-        // creatorFee={creatorFee.value}
-        stakeAmount={stakeAmount.value + creatorFee.value}
-      />
+      <JoinCommitmentButton commitId={id} stakeAmount={stakeAmount.value + creatorFee.value} />
+    </div>
+  )
+}
+
+function TimeRemaining({ commitId = '' }) {
+  const { data: deadlines } = getCommitmentDeadlines(commitId)
+  if (!deadlines?.length) return null
+  return (
+    <div>
+      <p>Time Remaining: {formatSecondsToDays(deadlines[0])}</p>
+      <p>Fulfillment Remaining: {formatSecondsToDays(deadlines[1])}</p>
     </div>
   )
 }
@@ -52,7 +61,7 @@ function JoinCommitmentButton({
   stakeAmount,
 }: {
   commitId: string
-  stakeAmount: number
+  stakeAmount: bigint
 }) {
   const { address } = useAccount()
   const queryClient = useQueryClient()

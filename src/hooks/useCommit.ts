@@ -95,16 +95,26 @@ export function useCreateCommitment() {
 export function useJoinCommitment() {
   const waitForEvent = useWaitForEvent(COMMIT_ABI)
   const { writeContractAsync } = useWriteContract()
+  const { data: joinFee } = useJoinFee()
 
   return useMutation({
-    mutationFn: async (params: { commitId: string; stakeAmount: number }) =>
+    mutationFn: async (params: { commitId: string }) =>
+      joinFee &&
       writeContractAsync({
         address: COMMIT_CONTRACT_ADDRESS,
         abi: COMMIT_ABI,
         functionName: 'joinCommitment',
         args: [BigInt(params.commitId)],
-        value: BigInt(params.stakeAmount),
+        value: BigInt(joinFee),
       }).then((hash) => waitForEvent(hash, 'CommitmentJoined')),
+  })
+}
+
+export function useJoinFee() {
+  return useReadContract({
+    address: COMMIT_CONTRACT_ADDRESS,
+    abi: COMMIT_ABI,
+    functionName: 'PROTOCOL_JOIN_FEE',
   })
 }
 
@@ -235,6 +245,7 @@ export function useGetActiveCommitments() {
 function formatCommitment(id: number, details: readonly any[]) {
   // TODO: Decimals should be fetched from token
   const stakeAmount = details[1] ?? 0
+  const creatorFee = details[2] ?? 0
   const timeRemaining = Number(details[6] ?? 0)
 
   return {
@@ -245,7 +256,11 @@ function formatCommitment(id: number, details: readonly any[]) {
       formatted: formatUnits(stakeAmount, 18),
       token: 'ETH',
     },
-    joinFee: details[2],
+    creatorFee: {
+      value: creatorFee,
+      formatted: formatUnits(creatorFee, 18),
+      token: 'ETH',
+    },
     participants: Number(details[3]),
     description: details[4],
     status: details[5],

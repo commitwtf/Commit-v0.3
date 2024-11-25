@@ -1,7 +1,12 @@
 'use client'
 import { Button } from '@/components'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
-import { useCommitmentToken, useGetCommitmentDetails, useJoinCommitment } from '@/hooks/useCommit'
+import {
+  useCommitmentToken,
+  useGetCommitmentDetails,
+  useJoinCommitment,
+  useJoinFee,
+} from '@/hooks/useCommit'
 import { useAllowance, useApprove } from '@/hooks/useToken'
 import { formatSecondsToDays, toNow } from '@/utils/date'
 import { useQueryClient } from '@tanstack/react-query'
@@ -15,20 +20,29 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
   if (isLoading) return <div>Loading...</div>
   if (isError || !data) return <div>Error loading commitment</div>
 
-  const { creator, stakeAmount, joinFee, participants, description, status, timeRemaining } = data
+  const { creator, stakeAmount, creatorFee, participants, description, status, timeRemaining } =
+    data
 
   return (
     <div>
       <h1>Commitment #{id}</h1>
       <p>Creator: {creator}</p>
-      <p>Stake Amount: {stakeAmount.formatted} ETH</p>
-      <p>Join Fee: {joinFee} ETH</p>
+      <p>
+        Stake Amount: {stakeAmount.formatted} {stakeAmount.token}
+      </p>
+      <p>
+        Join Fee: {creatorFee.formatted} {creatorFee.token}
+      </p>
       <p>Participants: {participants}</p>
       <p>Description: {description}</p>
       <p>Status: {status}</p>
       <p>Time Remaining: {formatSecondsToDays(timeRemaining)} seconds</p>
 
-      <JoinCommitmentButton commitId={id} stakeAmount={stakeAmount.value} />
+      <JoinCommitmentButton
+        commitId={id}
+        // creatorFee={creatorFee.value}
+        stakeAmount={stakeAmount.value + creatorFee.value}
+      />
     </div>
   )
 }
@@ -42,6 +56,7 @@ function JoinCommitmentButton({
 }) {
   const { address } = useAccount()
   const queryClient = useQueryClient()
+
   const { data: token } = useCommitmentToken(commitId)
   const { mutate, isPending } = useJoinCommitment()
 
@@ -63,7 +78,7 @@ function JoinCommitmentButton({
     )
 
   return (
-    <Button isLoading={isPending} onClick={() => mutate({ commitId, stakeAmount })}>
+    <Button isLoading={isPending} onClick={() => mutate({ commitId })}>
       Join
     </Button>
   )

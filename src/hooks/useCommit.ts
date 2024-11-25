@@ -322,32 +322,6 @@ function mapCommitment(commitment: CommitmentGraphQL) {
     },
   }
 }
-function formatCommitment(id: number, details: readonly any[]) {
-  // TODO: Decimals should be fetched from token
-  const stakeAmount = details[1] ?? 0
-  const creatorFee = details[2] ?? 0
-  const timeRemaining = Number(details[6] ?? 0)
-
-  return {
-    id,
-    creator: details[0],
-    stakeAmount: {
-      value: stakeAmount,
-      formatted: formatUnits(stakeAmount, 18),
-      token: 'ETH',
-    },
-    creatorFee: {
-      value: creatorFee,
-      formatted: formatUnits(creatorFee, 18),
-      token: 'ETH',
-    },
-    participants: Number(details[3]),
-    description: details[4],
-    status: details[5],
-    timeRemaining,
-    // committedValue,
-  }
-}
 
 // User's commitments
 export function useUserCommitments(address: string) {

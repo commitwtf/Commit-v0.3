@@ -1,4 +1,4 @@
-import { CommitmentDetails } from '@/hooks/useCommit'
+import { CommitmentDetails, getCommitmentDeadlines } from '@/hooks/useCommit'
 import { formatSecondsToDays } from '@/utils/date'
 import { Users, Timer } from 'lucide-react'
 import Link from 'next/link'
@@ -30,9 +30,15 @@ export function CommitCard({
 
         <div className='flex items-center gap-2 text-gray-600 dark:text-gray-400'>
           <Timer className='w-4 h-4' />
-          <span className='text-sm'>{formatSecondsToDays(timeRemaining)} left</span>
+          <TimeRemaining commitId={id} />
         </div>
       </div>
     </Link>
   )
+}
+
+function TimeRemaining({ commitId }: { commitId: number }) {
+  const { data: deadlines } = getCommitmentDeadlines(String(commitId))
+  if (!deadlines?.length) return null
+  return <span className='text-sm'>{formatSecondsToDays(deadlines[0])} left</span>
 }

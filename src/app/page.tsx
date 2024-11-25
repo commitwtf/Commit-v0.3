@@ -9,6 +9,7 @@ import { WalletError } from '@/components'
 const HomePage = () => {
   const { error: walletError } = useWalletGuard()
   const { data: commits = [] } = useGetActiveCommitments()
+
   return (
     <main className='flex-1 overflow-y-auto'>
       <div className='max-w-7xl mx-auto p-6'>

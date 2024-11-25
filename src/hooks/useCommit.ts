@@ -1,22 +1,19 @@
 'use client'
-import {
-  useReadContract,
-  useWriteContract,
-  useWaitForTransactionReceipt,
-  usePublicClient,
-} from 'wagmi'
+import { useReadContract, useWriteContract, useWaitForTransactionReceipt } from 'wagmi'
 import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 import { useState, useEffect } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useWaitForEvent } from './useWaitForEvent'
-import { formatEther, formatUnits, getAddress } from 'viem'
+import { Address, formatUnits } from 'viem'
+import { client } from '@/lib/graphql'
+import { gql } from 'graphql-tag'
 
 export interface CommitmentDetails {
   id: number
   creator: string
   stakeAmount: { formatted: string; value: bigint; token: string }
   joinFee: number
-  participants: number
+  participants: Address[]
   description: string
   status: number
   timeRemaining: number
@@ -30,6 +27,54 @@ interface CreateCommitmentParams {
   joinDeadline: number
   fulfillmentDeadline: number
 }
+
+type CommitmentGraphQL = {
+  id: string
+  creator: {
+    address: Address
+    totalClaimed: string
+  }
+  tokenAddress: Address
+  stakeAmount: string
+  creatorFee: string
+  status: string
+  participants: {
+    address: Address
+  }[]
+  description: string
+}
+const COMMITMENTS_QUERY = gql`
+  query Commitments(
+    $first: Int
+    $skip: Int
+    $orderBy: Commitment_orderBy
+    $orderDirection: OrderDirection
+    $where: Commitment_filter
+  ) {
+    commitments(
+      first: $first
+      skip: $skip
+      orderBy: $orderBy
+      orderDirection: $orderDirection
+      where: $where
+    ) {
+      id
+      description
+      creator {
+        address
+        totalClaimed
+      }
+      tokenAddress
+      stakeAmount
+      creatorFee
+      creatorFee
+      status
+      participants {
+        address
+      }
+    }
+  }
+`
 
 // Get commitment details
 export function useGetCommitmentDetails(commitId: number) {
@@ -213,35 +258,39 @@ export function useGetCommitmentWinners(commitId: number) {
 
 // Fetch active commitments
 export function useGetActiveCommitments() {
-  const client = usePublicClient()
-
-  // Get total number of commitments
-  const { data: commitCount } = useReadContract({
-    address: COMMIT_CONTRACT_ADDRESS,
-    abi: COMMIT_ABI,
-    functionName: 'nextCommitmentId',
-  })
-
   return useQuery({
-    queryKey: ['commitments', 'active', Number(commitCount)],
-    queryFn: async () =>
-      Promise.all(
-        Array.from({ length: Number(commitCount) })
-          .fill(0)
-          .map((_, id) =>
-            client
-              ?.readContract({
-                address: COMMIT_CONTRACT_ADDRESS,
-                abi: COMMIT_ABI,
-                functionName: 'getCommitmentDetails',
-                args: [BigInt(id)],
-              })
-              .then((details) => formatCommitment(id, details))
-          )
-      ),
+    queryKey: ['commitments', 'active'],
+    queryFn: () =>
+      client
+        .query<{
+          commitments: CommitmentGraphQL[]
+        }>(COMMITMENTS_QUERY, {
+          where: {},
+          orderBy: 'id',
+          orderDirection: 'desc',
+        })
+        .toPromise()
+        .then((r) => r.data?.commitments.map(mapCommitment)),
   })
 }
 
+function mapCommitment(commitment: CommitmentGraphQL) {
+  const creatorFee = BigInt(commitment.creatorFee)
+  const stakeAmount = BigInt(commitment.stakeAmount)
+  return {
+    ...commitment,
+    stakeAmount: {
+      value: stakeAmount,
+      formatted: formatUnits(stakeAmount, 18),
+      token: 'ETH',
+    },
+    creatorFee: {
+      value: creatorFee,
+      formatted: formatUnits(creatorFee, 18),
+      token: 'ETH',
+    },
+  }
+}
 function formatCommitment(id: number, details: readonly any[]) {
   // TODO: Decimals should be fetched from token
   const stakeAmount = details[1] ?? 0

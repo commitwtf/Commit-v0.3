@@ -18,7 +18,7 @@ export function CommitCard({
         <div className='flex items-center justify-between mb-4'>
           <div className='flex items-center gap-2 text-gray-600 dark:text-gray-400'>
             <Users className='w-4 h-4' />
-            <span className='text-sm'>{participants} participants</span>
+            <span className='text-sm'>{participants?.length} participants</span>
           </div>
           <div className='text-gray-600 dark:text-gray-400'>
             <span className='text-sm font-medium'>

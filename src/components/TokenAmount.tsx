@@ -1,12 +1,13 @@
-import { Address } from 'viem'
+import { Address, formatUnits } from 'viem'
 import { useToken } from '@/hooks/useToken'
 
-export function TokenAmount(props: { formatted: string; token: Address }) {
+export function TokenAmount(props: { formatted: string; value: bigint; token: Address }) {
   const token = useToken(props.token)
+  const value = formatUnits(props.value, token.data?.decimals ?? 18)
 
   return (
     <>
-      {props.formatted} {token.data?.symbol}
+      {value} {token.data?.symbol}
     </>
   )
 }

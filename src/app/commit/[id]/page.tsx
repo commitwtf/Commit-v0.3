@@ -16,6 +16,7 @@ import { use } from 'react'
 import { useAccount } from 'wagmi'
 import { User, Users, Clock, AlertCircle, Coins, Wallet } from 'lucide-react'
 import { Address, getAddress } from 'viem'
+import { ResolveCommit } from '@/components/ResolveCommit'
 
 export default function CommitmentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -141,6 +142,8 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
           })()}
         </div>
       </div>
+
+      <ResolveCommit commitId={data?.id} />
     </main>
   )
 }

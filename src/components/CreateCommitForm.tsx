@@ -3,7 +3,7 @@
 import { z } from 'zod'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
-import { getAddress, parseUnits } from 'viem'
+import { Address, getAddress, parseUnits } from 'viem'
 import {
   Form,
   FormControl,
@@ -18,6 +18,11 @@ import { Button } from '@/components/ui/Button'
 import { Textarea } from '@/components/ui/textarea'
 import { useRouter } from 'next/navigation'
 import { useCreateCommitment } from '@/hooks/useCommit'
+import { useAllowance, useApprove, useToken } from '@/hooks/useToken'
+import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
+import { useAccount } from 'wagmi'
+import { TokenAmount } from './TokenAmount'
+import { useQueryClient } from '@tanstack/react-query'
 
 const CreateCommitmentSchema = z.object({
   tokenAddress: z.string().nonempty('Token address is required'),
@@ -27,7 +32,10 @@ const CreateCommitmentSchema = z.object({
   joinDeadline: z.string(),
   fulfillmentDeadline: z.string(),
 })
+
+const DECIMALS = 18
 export function CreateCommitForm() {
+  const { address } = useAccount()
   const form = useForm<z.infer<typeof CreateCommitmentSchema>>({
     resolver: zodResolver(CreateCommitmentSchema),
     defaultValues: {
@@ -42,10 +50,24 @@ export function CreateCommitForm() {
     },
   })
 
-  const router = useRouter()
-  const { mutateAsync, isPending } = useCreateCommitment()
+  const queryClient = useQueryClient()
+  const tokenAddress = form.watch('tokenAddress') as Address
+  const { data: allowance = 0, queryKey } = useAllowance(
+    tokenAddress,
+    address!,
+    COMMIT_CONTRACT_ADDRESS
+  )
+  const token = useToken(tokenAddress)
+  const approve = useApprove(tokenAddress, COMMIT_CONTRACT_ADDRESS)
 
-  console.log(form.watch())
+  const transferAmount = parseUnits(
+    String(Number(form.watch('stakeAmount') ?? 0) + Number(form.watch('creatorFee') ?? 0)),
+    DECIMALS
+  )
+
+  const router = useRouter()
+  const { mutateAsync, isPending, error, failureReason } = useCreateCommitment()
+  console.log('comp', { error, failureReason })
   return (
     <Form {...form}>
       <form
@@ -53,8 +75,8 @@ export function CreateCommitForm() {
         onSubmit={form.handleSubmit(async (values) => {
           console.log('Create commitment', values)
 
-          const stakeAmount = parseUnits(String(values.stakeAmount), 18)
-          const creatorFee = parseUnits(String(values.creatorFee), 18)
+          const stakeAmount = parseUnits(String(values.stakeAmount), DECIMALS)
+          const creatorFee = parseUnits(String(values.creatorFee), DECIMALS)
 
           console.log(stakeAmount, creatorFee)
           return mutateAsync({
@@ -66,6 +88,7 @@ export function CreateCommitForm() {
             fulfillmentDeadline: Math.floor(new Date(values.fulfillmentDeadline) / 1000),
           }).then((res) => {
             console.log(res)
+            alert(`Created: ${JSON.stringify(res)}`)
             // router.push('/commitments')
           })
         })}
@@ -171,13 +194,28 @@ export function CreateCommitForm() {
           Note: to prevent spam, creating commit costs 0.001ETH. Thank you for your support. Let's
           commit!
         </p>
-        <Button
-          type='submit'
-          isLoading={isPending}
-          className='w-full bg-[#CECECE] text-gray-900 hover:bg-[#BEBEBE]'
-        >
-          Commit
-        </Button>
+        {transferAmount > allowance ? (
+          <Button
+            type='button'
+            className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
+            isLoading={approve.isPending}
+            onClick={() =>
+              approve.writeContractAsync(BigInt(transferAmount)).then(() => {
+                void queryClient.invalidateQueries({ queryKey })
+              })
+            }
+          >
+            Approve <TokenAmount value={transferAmount} token={tokenAddress} />
+          </Button>
+        ) : (
+          <Button
+            type='submit'
+            isLoading={isPending}
+            className='w-full bg-[#CECECE] text-gray-900 hover:bg-[#BEBEBE]'
+          >
+            Commit
+          </Button>
+        )}
       </form>
     </Form>
   )

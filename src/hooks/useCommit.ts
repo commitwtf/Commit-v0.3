@@ -138,9 +138,9 @@ export function useGetCommitmentDeadlines(commitId: string) {
 // Create new commitment
 export function useCreateCommitment() {
   const waitForEvent = useWaitForEvent(COMMIT_ABI)
-  const { writeContractAsync } = useWriteContract()
+  const { writeContractAsync, error, failureReason } = useWriteContract()
   const { data: PROTOCOL_JOIN_FEE } = useProtocolJoinFee()
-
+  console.log('hook', { error, failureReason })
   return useMutation({
     mutationFn: async (params: {
       tokenAddress: Address

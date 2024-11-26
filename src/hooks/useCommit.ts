@@ -5,6 +5,7 @@ import {
   useWaitForTransactionReceipt,
   useReadContracts,
   useAccount,
+  useSimulateContract,
 } from 'wagmi'
 import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 import { useState, useEffect } from 'react'
@@ -138,9 +139,28 @@ export function useGetCommitmentDeadlines(commitId: string) {
 // Create new commitment
 export function useCreateCommitment() {
   const waitForEvent = useWaitForEvent(COMMIT_ABI)
-  const { writeContractAsync, error, failureReason } = useWriteContract()
-  const { data: PROTOCOL_JOIN_FEE } = useProtocolJoinFee()
-  console.log('hook', { error, failureReason })
+
+  const { writeContractAsync, data, error, failureReason } = useWriteContract()
+  const { data: PROTOCOL_CREATE_FEE } = useProtocolCreateFee()
+  const simulate = useSimulateContract({
+    abi: COMMIT_ABI,
+    address: COMMIT_CONTRACT_ADDRESS,
+    functionName: 'createCommitment',
+    args: [
+      '0x4200000000000000000000000000000000000006',
+
+      BigInt(100000000000000),
+      BigInt(0),
+      'testing 123',
+      BigInt(1732820640),
+      BigInt(1732647840),
+    ],
+    value: PROTOCOL_CREATE_FEE,
+    query: { enabled: Boolean(PROTOCOL_CREATE_FEE) },
+  })
+  console.log(PROTOCOL_CREATE_FEE)
+  console.log('simulate', simulate.data, simulate.error, simulate)
+  console.log('hook', { data, error, failureReason })
   return useMutation({
     mutationFn: async (params: {
       tokenAddress: Address
@@ -150,9 +170,9 @@ export function useCreateCommitment() {
       joinDeadline: number
       fulfillmentDeadline: number
     }) => {
-      console.log(params)
+      console.log('-----', params)
       return (
-        PROTOCOL_JOIN_FEE &&
+        PROTOCOL_CREATE_FEE &&
         writeContractAsync({
           address: COMMIT_CONTRACT_ADDRESS,
           abi: COMMIT_ABI,
@@ -165,7 +185,7 @@ export function useCreateCommitment() {
             BigInt(params.joinDeadline),
             BigInt(params.fulfillmentDeadline),
           ],
-          value: PROTOCOL_JOIN_FEE,
+          value: PROTOCOL_CREATE_FEE,
         }).then((hash) => waitForEvent(hash, 'CommitmentCreated'))
       )
     },
@@ -235,6 +255,13 @@ export function useProtocolJoinFee() {
     address: COMMIT_CONTRACT_ADDRESS,
     abi: COMMIT_ABI,
     functionName: 'PROTOCOL_JOIN_FEE',
+  })
+}
+export function useProtocolCreateFee() {
+  return useReadContract({
+    address: COMMIT_CONTRACT_ADDRESS,
+    abi: COMMIT_ABI,
+    functionName: 'PROTOCOL_CREATE_FEE',
   })
 }
 

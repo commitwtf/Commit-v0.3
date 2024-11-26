@@ -44,9 +44,7 @@ export function CreateCommitForm() {
       creatorFee: 0.0001,
       description: '',
       joinDeadline: new Date().toISOString().slice(0, 16),
-      fulfillmentDeadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2)
-        .toISOString()
-        .slice(0, 16),
+      fulfillmentDeadline: new Date(Date.now() + 1000 * 60 * 60 * 24).toISOString().slice(0, 16),
     },
   })
 

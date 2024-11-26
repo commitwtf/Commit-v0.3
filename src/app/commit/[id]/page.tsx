@@ -35,7 +35,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
       </main>
     )
   }
-
+  console.log(data)
   if (isError || !data) {
     return (
       <main className='flex-1 overflow-y-auto'>

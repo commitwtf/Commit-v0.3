@@ -173,7 +173,7 @@ function JoinCommitmentButton({
   const queryClient = useQueryClient()
 
   const { data: token } = useCommitmentToken(commitId)
-  const { mutate, isPending } = useJoinCommitment()
+  const { mutateAsync, isPending } = useJoinCommitment()
 
   const { data: allowance = 0, queryKey } = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
   const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)

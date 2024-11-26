@@ -4,9 +4,13 @@ import { Button } from './ui'
 
 export function CancelCommit({ commitId = '' }) {
   const isCreator = useIsCommitCreator(commitId)
-  const { mutate } = useCancelCommitment()
+  const { mutate, isPending } = useCancelCommitment()
 
   if (!isCreator) return null
 
-  return <Button onClick={() => mutate({ commitId })}>Cancel</Button>
+  return (
+    <Button isLoading={isPending} onClick={() => mutate({ commitId })}>
+      Cancel
+    </Button>
+  )
 }

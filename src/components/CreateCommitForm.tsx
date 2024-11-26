@@ -61,10 +61,7 @@ export function CreateCommitForm() {
   const approve = useApprove(tokenAddress, COMMIT_CONTRACT_ADDRESS)
 
   console.log(token.data)
-  const transferAmount = parseUnits(
-    String(Number(form.watch('stakeAmount') ?? 0) + Number(form.watch('creatorFee') ?? 0)),
-    DECIMALS
-  )
+  const transferAmount = parseUnits(String(Number(form.watch('stakeAmount') ?? 0)), DECIMALS)
 
   const router = useRouter()
   const { mutateAsync, isPending, error, failureReason } = useCreateCommitment()

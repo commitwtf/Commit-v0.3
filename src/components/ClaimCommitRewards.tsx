@@ -10,7 +10,7 @@ export function ClaimCommitRewards({ commitId = '' }) {
   const { data, refetch } = useGetCommitmentDetails(commitId)
 
   // Only winners can see the Claim button
-  const winners = data?.winners.map((p) => p.address)
+  const winners = data?.winners.map((p) => getAddress(p.address))
   if (!address || !winners?.includes(getAddress(address))) return null
 
   return (

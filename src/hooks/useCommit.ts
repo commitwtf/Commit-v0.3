@@ -137,6 +137,36 @@ export function useGetCommitmentDeadlines(commitId: string) {
 
 // Create new commitment
 export function useCreateCommitment() {
+  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const { writeContractAsync } = useWriteContract()
+  const { data: PROTOCOL_JOIN_FEE } = useProtocolJoinFee()
+
+  return useMutation({
+    mutationFn: async (params: {
+      tokenAddress: Address
+      stakeAmount: bigint
+      creatorFee: bigint
+      description: string
+      joinDeadline: number
+      fulfillmentDeadline: number
+    }) =>
+      PROTOCOL_JOIN_FEE &&
+      writeContractAsync({
+        address: COMMIT_CONTRACT_ADDRESS,
+        abi: COMMIT_ABI,
+        functionName: 'createCommitment',
+        args: [
+          params.tokenAddress,
+          params.stakeAmount,
+          params.creatorFee,
+          params.description,
+          BigInt(params.joinDeadline),
+          BigInt(params.fulfillmentDeadline),
+        ],
+        value: PROTOCOL_JOIN_FEE,
+      }).then((hash) => waitForEvent(hash, 'CommitmentCreated')),
+  })
+
   // const { writeContract, isPending } = useWriteContract()
   // const [hash, setHash] = useState<Address>()
   // const {
@@ -153,12 +183,12 @@ export function useCreateCommitment() {
   //       abi: COMMIT_ABI,
   //       functionName: 'createCommitment',
   //       args: [
-  //         getAddress(params.tokenAddress),
-  //         params.stakeAmount,
-  //         params.joinFee,
-  //         params.description,
-  //         BigInt(params.joinDeadline),
-  //         BigInt(params.fulfillmentDeadline),
+  // getAddress(params.tokenAddress),
+  // params.stakeAmount,
+  // params.joinFee,
+  // params.description,
+  // BigInt(params.joinDeadline),
+  // BigInt(params.fulfillmentDeadline),
   //       ],
   //       value: BigInt(1000000000000000),
   //     })

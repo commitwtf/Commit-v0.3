@@ -4,6 +4,7 @@ import {
   useWriteContract,
   useWaitForTransactionReceipt,
   useReadContracts,
+  useAccount,
 } from 'wagmi'
 import { COMMIT_CONTRACT_ADDRESS, COMMIT_ABI } from '@/config/contract'
 import { useState, useEffect } from 'react'
@@ -288,22 +289,37 @@ export function useGetCommitmentWinners(commitId: number) {
   })
 }
 
-// Fetch active commitments
-export function useGetActiveCommitments() {
+export function useCommitments(
+  filter: {
+    orderBy?: 'id'
+    orderDirection?: 'asc' | 'desc'
+    where?: {
+      creator_in?: Address[]
+      id_in?: string[]
+    }
+  },
+  opts: { enabled: boolean } = { enabled: true }
+) {
   return useQuery({
-    queryKey: ['commitments', 'active'],
+    enabled: opts.enabled,
+    queryKey: ['commitments', filter],
     queryFn: () =>
       client
         .query<{
           commitments: CommitmentGraphQL[]
-        }>(COMMITMENTS_QUERY, {
-          where: {},
-          orderBy: 'id',
-          orderDirection: 'desc',
-        })
+        }>(COMMITMENTS_QUERY, filter)
         .toPromise()
         .then((r) => r.data?.commitments.map(mapCommitment)),
   })
+}
+
+// Fetch active commitments
+export function useGetActiveCommitments() {
+  return useCommitments({ orderBy: 'id', orderDirection: 'desc' })
+}
+// User's commitments
+export function useUserCommitments(address?: Address) {
+  return useCommitments({ where: { creator_in: [address!] } }, { enabled: Boolean(address) })
 }
 
 function mapCommitment(commitment: CommitmentGraphQL) {
@@ -322,54 +338,4 @@ function mapCommitment(commitment: CommitmentGraphQL) {
       token: commitment.tokenAddress,
     },
   }
-}
-
-// User's commitments
-export function useUserCommitments(address: string) {
-  const [userCommits, setUserCommits] = useState<CommitmentDetails[]>([])
-  const { data: commitCount } = useReadContract({
-    address: COMMIT_CONTRACT_ADDRESS,
-    abi: COMMIT_ABI,
-    functionName: 'nextCommitmentId',
-  })
-
-  useEffect(() => {
-    const fetchUserCommitments = async () => {
-      if (!commitCount || !address) return
-
-      const commits = []
-      for (let i = 0; i < Number(commitCount); i++) {
-        const participantsResult = await useReadContract({
-          address: COMMIT_CONTRACT_ADDRESS,
-          abi: COMMIT_ABI,
-          functionName: 'getCommitmentParticipants',
-          args: [i],
-        })
-
-        if (participantsResult.data?.includes(address)) {
-          const detailsResult = await useReadContract({
-            address: COMMIT_CONTRACT_ADDRESS,
-            abi: COMMIT_ABI,
-            functionName: 'getCommitmentDetails',
-            args: [i],
-          })
-          commits.push({
-            id: i,
-            creator: detailsResult.data[0],
-            stakeAmount: detailsResult.data[1],
-            joinFee: detailsResult.data[2],
-            participants: detailsResult.data[3],
-            description: detailsResult.data[4],
-            status: detailsResult.data[5],
-            timeRemaining: detailsResult.data[6],
-          })
-        }
-      }
-      setUserCommits(commits)
-    }
-
-    fetchUserCommitments()
-  }, [commitCount, address])
-
-  return userCommits
 }

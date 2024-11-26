@@ -130,47 +130,44 @@ export function useGetCommitmentDeadlines(commitId: string) {
 
 // Create new commitment
 export function useCreateCommitment() {
-  const { writeContract, isPending } = useWriteContract()
-  const [hash, setHash] = useState<Address>()
-
-  const {
-    data,
-    isLoading: isConfirming,
-    isSuccess,
-  } = useWaitForTransactionReceipt({
-    hash,
-  })
-
-  const createCommitment = async (params: CreateCommitmentParams) => {
-    try {
-      const tx = await writeContract({
-        address: COMMIT_CONTRACT_ADDRESS,
-        abi: COMMIT_ABI,
-        functionName: 'createCommitment',
-        args: [
-          getAddress(params.tokenAddress),
-          params.stakeAmount,
-          params.joinFee,
-          params.description,
-          BigInt(params.joinDeadline),
-          BigInt(params.fulfillmentDeadline),
-        ],
-        value: BigInt(1000000000000000),
-      })
-      if (tx) setHash(tx)
-      return tx
-    } catch (error) {
-      console.error('Contract error:', error)
-      throw error
-    }
-  }
-
-  return {
-    createCommitment,
-    isLoading: isPending || isConfirming,
-    isSuccess,
-    txHash: data?.transactionHash,
-  }
+  // const { writeContract, isPending } = useWriteContract()
+  // const [hash, setHash] = useState<Address>()
+  // const {
+  //   data,
+  //   isLoading: isConfirming,
+  //   isSuccess,
+  // } = useWaitForTransactionReceipt({
+  //   hash,
+  // })
+  // const createCommitment = async (params: CreateCommitmentParams) => {
+  //   try {
+  //     const tx = await writeContract({
+  //       address: COMMIT_CONTRACT_ADDRESS,
+  //       abi: COMMIT_ABI,
+  //       functionName: 'createCommitment',
+  //       args: [
+  //         getAddress(params.tokenAddress),
+  //         params.stakeAmount,
+  //         params.joinFee,
+  //         params.description,
+  //         BigInt(params.joinDeadline),
+  //         BigInt(params.fulfillmentDeadline),
+  //       ],
+  //       value: BigInt(1000000000000000),
+  //     })
+  //     if (tx) setHash(tx)
+  //     return tx
+  //   } catch (error) {
+  //     console.error('Contract error:', error)
+  //     throw error
+  //   }
+  // }
+  // return {
+  //   createCommitment,
+  //   isLoading: isPending || isConfirming,
+  //   isSuccess,
+  //   txHash: data?.transactionHash,
+  // }
 }
 
 // Join commitment
@@ -211,66 +208,60 @@ export function useCommitmentToken(commitId: string) {
 
 // Resolve commitment
 export function useResolveCommitment() {
-  const { writeContract, isPending } = useWriteContract()
-  const [hash, setHash] = useState<Address>()
-
-  const {
-    isLoading: isConfirming,
-    isSuccess,
-    data,
-  } = useWaitForTransactionReceipt({
-    hash,
-  })
-
-  const resolve = async (commitId: number) => {
-    const tx = await writeContract({
-      address: COMMIT_CONTRACT_ADDRESS,
-      abi: COMMIT_ABI,
-      functionName: 'resolveCommitment',
-      args: [BigInt(commitId)],
-    })
-    if (tx) setHash(tx)
-    return tx
-  }
-
-  return {
-    resolveCommitment: resolve,
-    isLoading: isPending || isConfirming,
-    isSuccess,
-    txHash: data?.transactionHash,
-  }
+  // const { writeContract, isPending } = useWriteContract()
+  // const [hash, setHash] = useState<Address>()
+  // const {
+  //   isLoading: isConfirming,
+  //   isSuccess,
+  //   data,
+  // } = useWaitForTransactionReceipt({
+  //   hash,
+  // })
+  // const resolve = async (commitId: number) => {
+  //   const tx = await writeContract({
+  //     address: COMMIT_CONTRACT_ADDRESS,
+  //     abi: COMMIT_ABI,
+  //     functionName: 'resolveCommitment',
+  //     args: [BigInt(commitId)],
+  //   })
+  //   if (tx) setHash(tx)
+  //   return tx
+  // }
+  // return {
+  //   resolveCommitment: resolve,
+  //   isLoading: isPending || isConfirming,
+  //   isSuccess,
+  //   txHash: data?.transactionHash,
+  // }
 }
 
 // Claim rewards
 export function useClaimRewards() {
-  const { writeContract, isPending } = useWriteContract()
-  const [hash, setHash] = useState<Address>()
-
-  const {
-    isLoading: isConfirming,
-    isSuccess,
-    data,
-  } = useWaitForTransactionReceipt({
-    hash,
-  })
-
-  const claim = async (commitId: number) => {
-    const tx = await writeContract({
-      address: COMMIT_CONTRACT_ADDRESS,
-      abi: COMMIT_ABI,
-      functionName: 'claimRewards',
-      args: [BigInt(commitId)],
-    })
-    if (tx) setHash(tx)
-    return tx
-  }
-
-  return {
-    claimRewards: claim,
-    isLoading: isPending || isConfirming,
-    isSuccess,
-    txHash: data?.transactionHash,
-  }
+  // const { writeContract, isPending } = useWriteContract()
+  // const [hash, setHash] = useState<Address>()
+  // const {
+  //   isLoading: isConfirming,
+  //   isSuccess,
+  //   data,
+  // } = useWaitForTransactionReceipt({
+  //   hash,
+  // })
+  // const claim = async (commitId: number) => {
+  //   const tx = await writeContract({
+  //     address: COMMIT_CONTRACT_ADDRESS,
+  //     abi: COMMIT_ABI,
+  //     functionName: 'claimRewards',
+  //     args: [BigInt(commitId)],
+  //   })
+  //   if (tx) setHash(tx)
+  //   return tx
+  // }
+  // return {
+  //   claimRewards: claim,
+  //   isLoading: isPending || isConfirming,
+  //   isSuccess,
+  //   txHash: data?.transactionHash,
+  // }
 }
 
 // Get participants

@@ -85,7 +85,9 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               <Wallet className='h-5 w-5 text-gray-500 dark:text-gray-400' />
               <div>
                 <div className='text-sm text-gray-500 dark:text-gray-400'>Stake Amount</div>
-                <TokenAmount {...data.stakeAmount} className='text-gray-900 dark:text-white' />
+                <span className='text-gray-900 dark:text-white'>
+                  <TokenAmount {...data.stakeAmount} />
+                </span>
               </div>
             </div>
 
@@ -93,7 +95,9 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               <Coins className='h-5 w-5 text-gray-500 dark:text-gray-400' />
               <div>
                 <div className='text-sm text-gray-500 dark:text-gray-400'>Creator Fee</div>
-                <TokenAmount {...data.creatorFee} className='text-gray-900 dark:text-white' />
+                <span className='text-gray-900 dark:text-white'>
+                  <TokenAmount {...data.creatorFee} />
+                </span>
               </div>
             </div>
           </div>

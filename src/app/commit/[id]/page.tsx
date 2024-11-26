@@ -17,10 +17,11 @@ import { useAccount } from 'wagmi'
 import { User, Users, Clock, AlertCircle, Coins, Wallet } from 'lucide-react'
 import { Address, getAddress } from 'viem'
 import { ResolveCommit } from '@/components/ResolveCommit'
+import { CancelCommit } from '@/components/CancelCommit'
 
 export default function CommitmentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
-  const { data, isError, isLoading } = useGetCommitmentDetails(Number(id))
+  const { data, isError, isLoading } = useGetCommitmentDetails(id)
 
   if (isLoading) {
     return (
@@ -48,8 +49,13 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
       <div className='max-w-2xl mx-auto px-4 py-6'>
         <div className='flex justify-between items-center mb-6'>
           <h1 className='text-2xl font-semibold text-gray-900 dark:text-white'>Commit Details</h1>
-          <div className='px-4 py-1.5 bg-[#DCDCDC] dark:bg-[#2A2A2A] rounded-full'>
-            <span className='text-sm font-medium text-gray-900 dark:text-white'>Commit #{id}</span>
+          <div className='flex items-center gap-2'>
+            <div className='px-4 py-1.5 bg-[#DCDCDC] dark:bg-[#2A2A2A] rounded-full'>
+              <span className='text-sm font-medium text-gray-900 dark:text-white'>
+                Commit #{id}
+              </span>
+            </div>
+            <CancelCommit commitId={data?.id} />
           </div>
         </div>
 

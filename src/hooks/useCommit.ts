@@ -172,22 +172,22 @@ export function useCreateCommitment() {
 export function useJoinCommitment() {
   const waitForEvent = useWaitForEvent(COMMIT_ABI)
   const { writeContractAsync } = useWriteContract()
-  const { data: PROTOCOL_JOIN_FEE } = useProtocolJoinFee()
+  const { data: joinFee } = useJoinFee()
 
   return useMutation({
     mutationFn: async (params: { commitId: string }) =>
-      PROTOCOL_JOIN_FEE &&
+      joinFee &&
       writeContractAsync({
         address: COMMIT_CONTRACT_ADDRESS,
         abi: COMMIT_ABI,
         functionName: 'joinCommitment',
         args: [BigInt(params.commitId)],
-        value: BigInt(PROTOCOL_JOIN_FEE),
+        value: BigInt(joinFee),
       }).then((hash) => waitForEvent(hash, 'CommitmentJoined')),
   })
 }
 
-export function useProtocolJoinFee() {
+export function useJoinFee() {
   return useReadContract({
     address: COMMIT_CONTRACT_ADDRESS,
     abi: COMMIT_ABI,

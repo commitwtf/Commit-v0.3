@@ -4,8 +4,8 @@ import { TokenAmount } from '@/components/TokenAmount'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import {
   CommitmentStatus,
-  getCommitmentDeadlines,
   useCommitmentToken,
+  useGetCommitmentDeadlines,
   useGetCommitmentDetails,
   useJoinCommitment,
 } from '@/hooks/useCommit'
@@ -85,7 +85,9 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               <Wallet className='h-5 w-5 text-gray-500 dark:text-gray-400' />
               <div>
                 <div className='text-sm text-gray-500 dark:text-gray-400'>Stake Amount</div>
-                <TokenAmount {...data.stakeAmount} className='text-gray-900 dark:text-white' />
+                <span className='text-gray-900 dark:text-white'>
+                  <TokenAmount {...data.stakeAmount} />
+                </span>
               </div>
             </div>
 
@@ -93,7 +95,9 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               <Coins className='h-5 w-5 text-gray-500 dark:text-gray-400' />
               <div>
                 <div className='text-sm text-gray-500 dark:text-gray-400'>Creator Fee</div>
-                <TokenAmount {...data.creatorFee} className='text-gray-900 dark:text-white' />
+                <span className='text-gray-900 dark:text-white'>
+                  <TokenAmount {...data.creatorFee} />
+                </span>
               </div>
             </div>
           </div>
@@ -142,7 +146,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
 }
 
 function TimeRemaining({ commitId = '' }) {
-  const { data: deadlines } = getCommitmentDeadlines(commitId)
+  const { data: deadlines } = useGetCommitmentDeadlines(commitId)
   if (!deadlines?.length) return null
   return (
     <div className='grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400'>
@@ -173,7 +177,7 @@ function JoinCommitmentButton({
   const queryClient = useQueryClient()
 
   const { data: token } = useCommitmentToken(commitId)
-  const { mutate, isPending } = useJoinCommitment()
+  const { mutateAsync, isPending } = useJoinCommitment()
 
   const { data: allowance = 0, queryKey } = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
   const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)
@@ -181,6 +185,7 @@ function JoinCommitmentButton({
 
   if (participants?.includes(address!))
     return <div className='flex justify-center'>Already joined</div>
+
   if (allowance < stakeAmount?.value)
     return (
       <Button
@@ -200,7 +205,11 @@ function JoinCommitmentButton({
     <Button
       className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
       isLoading={isPending}
-      onClick={() => mutate({ commitId })}
+      onClick={() =>
+        mutateAsync({ commitId }).then(() => {
+          void queryClient.invalidateQueries({ queryKey })
+        })
+      }
     >
       Commit <TokenAmount {...stakeAmount} value={transferAmount} />
     </Button>

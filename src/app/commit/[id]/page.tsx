@@ -4,8 +4,8 @@ import { TokenAmount } from '@/components/TokenAmount'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import {
   CommitmentStatus,
-  getCommitmentDeadlines,
   useCommitmentToken,
+  useGetCommitmentDeadlines,
   useGetCommitmentDetails,
   useJoinCommitment,
 } from '@/hooks/useCommit'
@@ -146,7 +146,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
 }
 
 function TimeRemaining({ commitId = '' }) {
-  const { data: deadlines } = getCommitmentDeadlines(commitId)
+  const { data: deadlines } = useGetCommitmentDeadlines(commitId)
   if (!deadlines?.length) return null
   return (
     <div className='grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400'>

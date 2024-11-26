@@ -15,15 +15,13 @@ import { client } from '@/lib/graphql'
 import { gql } from 'graphql-tag'
 
 export interface CommitmentDetails {
-  id: number
-  creator: string
+  id: string
+  creator: { address: Address }
   stakeAmount: { formatted: string; value: bigint; token: Address }
   creatorFee: { formatted: string; value: bigint; token: Address }
-  joinFee: number
-  participants: Address[]
+  participants: { address: Address }[]
   description: string
   status: CommitmentStatus
-  timeRemaining: number
 }
 
 export enum CommitmentStatus {
@@ -106,7 +104,7 @@ export function useGetCommitmentDetails(commitId: number) {
   })
 }
 
-export function getCommitmentDeadlines(commitId: string) {
+export function useGetCommitmentDeadlines(commitId: string) {
   const { data, ...rest } = useReadContracts({
     contracts: [
       {
@@ -340,6 +338,7 @@ function mapCommitment(commitment: CommitmentGraphQL) {
   const stakeAmount = BigInt(commitment.stakeAmount)
   return {
     ...commitment,
+    status: commitment.status as CommitmentStatus,
     stakeAmount: {
       value: stakeAmount,
       formatted: formatUnits(stakeAmount, 18),

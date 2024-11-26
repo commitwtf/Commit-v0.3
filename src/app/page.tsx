@@ -3,7 +3,7 @@
 import { AlertCircle } from 'lucide-react'
 import { CommitCard } from '@/src/components'
 import { useWalletGuard } from '@/hooks/useWalletGuard'
-import { useGetActiveCommitments, useCreateCommitment } from '@/hooks/useCommit'
+import { useGetActiveCommitments } from '@/hooks/useCommit'
 import { WalletError } from '@/components'
 
 const HomePage = () => {

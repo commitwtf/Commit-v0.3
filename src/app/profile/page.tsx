@@ -10,8 +10,8 @@ import { cn } from '@/utils'
 
 const ProfilePage = () => {
   const account = useAccount()
-  const { data: userCommits } = useUserCommitments(account.address)
-  const { data: joinedCommits } = useJoinedCommitments(account.address)
+  const { data: userCommits = [] } = useUserCommitments(account.address)
+  const { data: joinedCommits = [] } = useJoinedCommitments(account.address)
   return (
     <main className='flex-1 overflow-y-auto'>
       <div className='max-w-7xl mx-auto p-6'>

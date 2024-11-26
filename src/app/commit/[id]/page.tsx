@@ -3,6 +3,7 @@ import { Button } from '@/components'
 import { TokenAmount } from '@/components/TokenAmount'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import {
+  CommitmentStatus,
   getCommitmentDeadlines,
   useCommitmentToken,
   useGetCommitmentDetails,
@@ -113,13 +114,27 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
             </div>
             <TimeRemaining commitId={id} />
           </div>
-
-          <JoinCommitmentButton
-            commitId={id}
-            participants={data.participants?.map((p) => getAddress(p.address))}
-            stakeAmount={data.stakeAmount}
-            creatorFee={data.creatorFee}
-          />
+          {(() => {
+            switch (data.status) {
+              case CommitmentStatus.Created: {
+                return (
+                  <JoinCommitmentButton
+                    commitId={id}
+                    participants={data.participants?.map((p) => getAddress(p.address))}
+                    stakeAmount={data.stakeAmount}
+                    creatorFee={data.creatorFee}
+                  />
+                )
+              }
+              // TODO: Add actions Resolved and Cancelled
+              case CommitmentStatus.Resolved: {
+                return <pre>Resolved</pre>
+              }
+              case CommitmentStatus.Cancelled: {
+                return <pre>Commit Cancelled</pre>
+              }
+            }
+          })()}
         </div>
       </div>
     </main>

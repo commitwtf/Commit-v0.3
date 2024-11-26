@@ -18,6 +18,8 @@ import { User, Users, Clock, AlertCircle, Coins, Wallet } from 'lucide-react'
 import { Address, getAddress } from 'viem'
 import { ResolveCommit } from '@/components/ResolveCommit'
 import { CancelCommit } from '@/components/CancelCommit'
+
+import { ClaimCommitCreatorFee } from '@/components/ClaimCommitCreatorFee'
 import { ClaimCommitRewards } from '@/components/ClaimCommitRewards'
 
 export default function CommitmentPage({ params }: { params: Promise<{ id: string }> }) {
@@ -57,6 +59,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               </span>
             </div>
             <CancelCommit commitId={data?.id} />
+            <ClaimCommitCreatorFee commitId={data?.id} />
             <ClaimCommitRewards commitId={data?.id} />
           </div>
         </div>

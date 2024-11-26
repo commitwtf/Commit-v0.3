@@ -20,6 +20,7 @@ export interface CommitmentDetails {
   stakeAmount: { formatted: string; value: bigint; token: Address }
   creatorFee: { formatted: string; value: bigint; token: Address }
   participants: { address: Address }[]
+  winners: { address: Address }[]
   description: string
   status: CommitmentStatus
 }
@@ -52,6 +53,9 @@ type CommitmentGraphQL = {
   participants: {
     address: Address
   }[]
+  winners: {
+    address: Address
+  }[]
   description: string
 }
 const COMMITMENTS_QUERY = gql`
@@ -81,6 +85,9 @@ const COMMITMENTS_QUERY = gql`
       creatorFee
       status
       participants {
+        address
+      }
+      winners {
         address
       }
     }
@@ -239,31 +246,18 @@ export function useCancelCommitment() {
 
 // Claim rewards
 export function useClaimRewards() {
-  // const { writeContract, isPending } = useWriteContract()
-  // const [hash, setHash] = useState<Address>()
-  // const {
-  //   isLoading: isConfirming,
-  //   isSuccess,
-  //   data,
-  // } = useWaitForTransactionReceipt({
-  //   hash,
-  // })
-  // const claim = async (commitId: number) => {
-  //   const tx = await writeContract({
-  //     address: COMMIT_CONTRACT_ADDRESS,
-  //     abi: COMMIT_ABI,
-  //     functionName: 'claimRewards',
-  //     args: [BigInt(commitId)],
-  //   })
-  //   if (tx) setHash(tx)
-  //   return tx
-  // }
-  // return {
-  //   claimRewards: claim,
-  //   isLoading: isPending || isConfirming,
-  //   isSuccess,
-  //   txHash: data?.transactionHash,
-  // }
+  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const { writeContractAsync } = useWriteContract()
+
+  return useMutation({
+    mutationFn: async (params: { commitId: string }) =>
+      writeContractAsync({
+        address: COMMIT_CONTRACT_ADDRESS,
+        abi: COMMIT_ABI,
+        functionName: 'claimRewards',
+        args: [BigInt(params.commitId)],
+      }).then((hash) => waitForEvent(hash, 'RewardsClaimed')),
+  })
 }
 
 export function useClaimCreatorFee() {

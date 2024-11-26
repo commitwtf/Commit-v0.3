@@ -15,15 +15,13 @@ import { client } from '@/lib/graphql'
 import { gql } from 'graphql-tag'
 
 export interface CommitmentDetails {
-  id: number
-  creator: string
+  id: string
+  creator: { address: Address }
   stakeAmount: { formatted: string; value: bigint; token: Address }
   creatorFee: { formatted: string; value: bigint; token: Address }
-  joinFee: number
-  participants: Address[]
+  participants: { address: Address }[]
   description: string
   status: CommitmentStatus
-  timeRemaining: number
 }
 
 export enum CommitmentStatus {
@@ -106,7 +104,7 @@ export function useGetCommitmentDetails(commitId: number) {
   })
 }
 
-export function getCommitmentDeadlines(commitId: string) {
+export function useGetCommitmentDeadlines(commitId: string) {
   const { data, ...rest } = useReadContracts({
     contracts: [
       {
@@ -302,6 +300,7 @@ export function useCommitments(
     where?: {
       creator_in?: Address[]
       id_in?: string[]
+      participants_?: { address_in: Address[] }
     }
   },
   opts: { enabled: boolean } = { enabled: true }
@@ -327,12 +326,19 @@ export function useGetActiveCommitments() {
 export function useUserCommitments(address?: Address) {
   return useCommitments({ where: { creator_in: [address!] } }, { enabled: Boolean(address) })
 }
+export function useJoinedCommitments(address?: Address) {
+  return useCommitments(
+    { where: { participants_: { address_in: [address] } } },
+    { enabled: Boolean(address) }
+  )
+}
 
 function mapCommitment(commitment: CommitmentGraphQL) {
   const creatorFee = BigInt(commitment.creatorFee)
   const stakeAmount = BigInt(commitment.stakeAmount)
   return {
     ...commitment,
+    status: commitment.status as CommitmentStatus,
     stakeAmount: {
       value: stakeAmount,
       formatted: formatUnits(stakeAmount, 18),

@@ -181,6 +181,7 @@ function JoinCommitmentButton({
 
   if (participants?.includes(address!))
     return <div className='flex justify-center'>Already joined</div>
+
   if (allowance < stakeAmount?.value)
     return (
       <Button
@@ -200,7 +201,11 @@ function JoinCommitmentButton({
     <Button
       className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
       isLoading={isPending}
-      onClick={() => mutate({ commitId })}
+      onClick={() =>
+        mutateAsync({ commitId }).then(() => {
+          void queryClient.invalidateQueries({ queryKey })
+        })
+      }
     >
       Commit <TokenAmount {...stakeAmount} value={transferAmount} />
     </Button>

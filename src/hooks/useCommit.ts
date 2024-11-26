@@ -302,6 +302,7 @@ export function useCommitments(
     where?: {
       creator_in?: Address[]
       id_in?: string[]
+      participants_?: { address_in: Address[] }
     }
   },
   opts: { enabled: boolean } = { enabled: true }
@@ -326,6 +327,12 @@ export function useGetActiveCommitments() {
 // User's commitments
 export function useUserCommitments(address?: Address) {
   return useCommitments({ where: { creator_in: [address!] } }, { enabled: Boolean(address) })
+}
+export function useJoinedCommitments(address?: Address) {
+  return useCommitments(
+    { where: { participants_: { address_in: [address] } } },
+    { enabled: Boolean(address) }
+  )
 }
 
 function mapCommitment(commitment: CommitmentGraphQL) {

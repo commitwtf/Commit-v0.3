@@ -88,7 +88,7 @@ const COMMITMENTS_QUERY = gql`
 `
 
 // Get commitment details
-export function useGetCommitmentDetails(commitId: number) {
+export function useGetCommitmentDetails(commitId: string) {
   return useQuery({
     queryKey: ['commitments', 'active'],
     queryFn: () =>
@@ -208,31 +208,33 @@ export function useCommitmentToken(commitId: string) {
 
 // Resolve commitment
 export function useResolveCommitment() {
-  // const { writeContract, isPending } = useWriteContract()
-  // const [hash, setHash] = useState<Address>()
-  // const {
-  //   isLoading: isConfirming,
-  //   isSuccess,
-  //   data,
-  // } = useWaitForTransactionReceipt({
-  //   hash,
-  // })
-  // const resolve = async (commitId: number) => {
-  //   const tx = await writeContract({
-  //     address: COMMIT_CONTRACT_ADDRESS,
-  //     abi: COMMIT_ABI,
-  //     functionName: 'resolveCommitment',
-  //     args: [BigInt(commitId)],
-  //   })
-  //   if (tx) setHash(tx)
-  //   return tx
-  // }
-  // return {
-  //   resolveCommitment: resolve,
-  //   isLoading: isPending || isConfirming,
-  //   isSuccess,
-  //   txHash: data?.transactionHash,
-  // }
+  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const { writeContractAsync } = useWriteContract()
+
+  return useMutation({
+    mutationFn: async (params: { commitId: string; winners: Address[] }) =>
+      writeContractAsync({
+        address: COMMIT_CONTRACT_ADDRESS,
+        abi: COMMIT_ABI,
+        functionName: 'resolveCommitment',
+        args: [BigInt(params.commitId), params.winners],
+      }).then((hash) => waitForEvent(hash, 'CommitmentResolved')),
+  })
+}
+
+export function useCancelCommitment() {
+  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const { writeContractAsync } = useWriteContract()
+
+  return useMutation({
+    mutationFn: async (params: { commitId: string }) =>
+      writeContractAsync({
+        address: COMMIT_CONTRACT_ADDRESS,
+        abi: COMMIT_ABI,
+        functionName: 'cancelCommitment',
+        args: [BigInt(params.commitId)],
+      }).then((hash) => waitForEvent(hash, 'CommitmentCancelled')),
+  })
 }
 
 // Claim rewards
@@ -341,4 +343,12 @@ function mapCommitment(commitment: CommitmentGraphQL) {
       token: commitment.tokenAddress,
     },
   }
+}
+
+export function useIsCommitCreator(commitId: string) {
+  const { address } = useAccount()
+  const { data } = useGetCommitmentDetails(commitId)
+
+  const creatorAddress = data?.creator?.address
+  return address && creatorAddress && getAddress(creatorAddress) === getAddress(address)
 }

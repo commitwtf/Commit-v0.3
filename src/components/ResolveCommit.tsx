@@ -1,3 +1,4 @@
+'use client'
 import { CommitmentStatus, useGetCommitmentDetails, useResolveCommitment } from '@/hooks/useCommit'
 import { Checkbox } from './ui/checkbox'
 import { Label } from './ui/label'

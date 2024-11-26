@@ -13,9 +13,9 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/Input'
+import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/Button'
-import { Textarea } from '@/components/ui/Textarea'
+import { Textarea } from '@/components/ui/textarea'
 import { useRouter } from 'next/navigation'
 import { useCreateCommitment } from '@/hooks/useCommit'
 
@@ -23,28 +23,29 @@ const CreateCommitmentSchema = z.object({
   tokenAddress: z.string().nonempty('Token address is required'),
   stakeAmount: z.number().min(0, 'Stake amount must be non-negative'),
   creatorFee: z.number().min(0, 'Creator fee must be non-negative'),
-  joinFee: z.number().min(0, 'Join fee must be non-negative'),
   description: z.string().nonempty('Description is required'),
-  joinDeadline: z.date(),
-  fulfillmentDeadline: z.date(),
+  joinDeadline: z.string(),
+  fulfillmentDeadline: z.string(),
 })
 export function CreateCommitForm() {
   const form = useForm<z.infer<typeof CreateCommitmentSchema>>({
     resolver: zodResolver(CreateCommitmentSchema),
     defaultValues: {
-      tokenAddress: '',
-      stakeAmount: 0,
-      creatorFee: 0,
-      joinFee: 0,
+      tokenAddress: '0x4200000000000000000000000000000000000006',
+      stakeAmount: 0.0001,
+      creatorFee: 0.0001,
       description: '',
-      joinDeadline: new Date(),
-      fulfillmentDeadline: new Date(),
+      joinDeadline: new Date().toISOString().slice(0, 16),
+      fulfillmentDeadline: new Date(Date.now() + 1000 * 60 * 60 * 24 * 2)
+        .toISOString()
+        .slice(0, 16),
     },
   })
 
   const router = useRouter()
   const { mutateAsync, isPending } = useCreateCommitment()
 
+  console.log(form.watch())
   return (
     <Form {...form}>
       <form
@@ -55,15 +56,17 @@ export function CreateCommitForm() {
           const stakeAmount = parseUnits(String(values.stakeAmount), 18)
           const creatorFee = parseUnits(String(values.creatorFee), 18)
 
+          console.log(stakeAmount, creatorFee)
           return mutateAsync({
             tokenAddress: getAddress(values.tokenAddress),
             stakeAmount,
             creatorFee,
             description: values.description,
-            joinDeadline: Math.floor(values.joinDeadline.getTime() / 1000),
-            fulfillmentDeadline: Math.floor(values.fulfillmentDeadline.getTime() / 1000),
-          }).then(() => {
-            router.push('/commitments')
+            joinDeadline: Math.floor(new Date(values.joinDeadline) / 1000),
+            fulfillmentDeadline: Math.floor(new Date(values.fulfillmentDeadline) / 1000),
+          }).then((res) => {
+            console.log(res)
+            // router.push('/commitments')
           })
         })}
       >
@@ -78,6 +81,19 @@ export function CreateCommitForm() {
               <FormLabel>Description</FormLabel>
               <FormControl>
                 <Textarea placeholder='Detailed overview' {...field} />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name='tokenAddress'
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>Token Address</FormLabel>
+              <FormControl>
+                <Textarea placeholder='0x...' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -121,7 +137,7 @@ export function CreateCommitForm() {
                 <Input
                   type='number'
                   min='0'
-                  step='0.01'
+                  step='0.00001'
                   placeholder='10'
                   {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}
@@ -141,7 +157,7 @@ export function CreateCommitForm() {
                 <Input
                   type='number'
                   min='0'
-                  step='0.01'
+                  step='0.00001'
                   placeholder='1'
                   {...field}
                   onChange={(e) => field.onChange(Number(e.target.value))}

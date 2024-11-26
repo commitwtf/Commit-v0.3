@@ -22,8 +22,14 @@ export interface CommitmentDetails {
   joinFee: number
   participants: Address[]
   description: string
-  status: number
+  status: CommitmentStatus
   timeRemaining: number
+}
+
+export enum CommitmentStatus {
+  Created = 'Created',
+  Resolved = 'Resolved',
+  Cancelled = 'Cancelled',
 }
 
 interface CreateCommitmentParams {

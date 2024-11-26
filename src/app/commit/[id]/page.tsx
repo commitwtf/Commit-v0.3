@@ -14,7 +14,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { use } from 'react'
 import { useAccount } from 'wagmi'
 import { User, Users, Clock, AlertCircle, Coins, Wallet } from 'lucide-react'
-import { Address } from 'viem'
+import { Address, getAddress } from 'viem'
 
 export default function CommitmentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -116,7 +116,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
 
           <JoinCommitmentButton
             commitId={id}
-            participants={data.participants?.map((p) => p.address)}
+            participants={data.participants?.map((p) => getAddress(p.address))}
             stakeAmount={data.stakeAmount}
             creatorFee={data.creatorFee}
           />
@@ -162,10 +162,11 @@ function JoinCommitmentButton({
 
   const { data: allowance = 0, queryKey } = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
   const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)
-  const transferAmount = stakeAmount.value + creatorFee.value
+  const transferAmount = stakeAmount?.value + creatorFee?.value
 
-  if (participants?.includes(address!)) return <div>Already joined</div>
-  if (allowance < stakeAmount.value)
+  if (participants?.includes(address!))
+    return <div className='flex justify-center'>Already joined</div>
+  if (allowance < stakeAmount?.value)
     return (
       <Button
         className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'

@@ -222,6 +222,21 @@ export function useResolveCommitment() {
   })
 }
 
+export function useCancelCommitment() {
+  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const { writeContractAsync } = useWriteContract()
+
+  return useMutation({
+    mutationFn: async (params: { commitId: string }) =>
+      writeContractAsync({
+        address: COMMIT_CONTRACT_ADDRESS,
+        abi: COMMIT_ABI,
+        functionName: 'cancelCommitment',
+        args: [BigInt(params.commitId)],
+      }).then((hash) => waitForEvent(hash, 'CommitmentCancelled')),
+  })
+}
+
 // Claim rewards
 export function useClaimRewards() {
   // const { writeContract, isPending } = useWriteContract()
@@ -328,4 +343,12 @@ function mapCommitment(commitment: CommitmentGraphQL) {
       token: commitment.tokenAddress,
     },
   }
+}
+
+export function useIsCommitCreator(commitId: string) {
+  const { address } = useAccount()
+  const { data } = useGetCommitmentDetails(commitId)
+
+  const creatorAddress = data?.creator?.address
+  return address && creatorAddress && getAddress(creatorAddress) === getAddress(address)
 }

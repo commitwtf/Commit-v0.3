@@ -1,23 +1,26 @@
 'use client'
-import { CommitmentStatus, useGetCommitmentDetails, useResolveCommitment } from '@/hooks/useCommit'
+import {
+  CommitmentStatus,
+  useGetCommitmentDetails,
+  useIsCommitCreator,
+  useResolveCommitment,
+} from '@/hooks/useCommit'
 import { Checkbox } from './ui/checkbox'
 import { Label } from './ui/label'
 import { Button } from './ui'
 import { useState } from 'react'
 import { Address, getAddress } from 'viem'
-import { useAccount } from 'wagmi'
 
 export function ResolveCommit({ commitId = '' }) {
-  const { address } = useAccount()
   const [selectedWinners, setWinners] = useState<Record<Address, boolean>>({})
   const { mutateAsync, isPending } = useResolveCommitment()
   const { data, refetch } = useGetCommitmentDetails(commitId)
 
+  const isCreator = useIsCommitCreator(commitId)
   if (data?.status !== CommitmentStatus.Created) return null
 
   // Only visible for Commit creators
-  const creatorAddress = data?.creator?.address
-  if (address && creatorAddress && getAddress(creatorAddress) !== getAddress(address)) return null
+  if (!isCreator) return null
 
   return (
     <div>

@@ -266,6 +266,21 @@ export function useClaimRewards() {
   // }
 }
 
+export function useClaimCreatorFee() {
+  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const { writeContractAsync } = useWriteContract()
+
+  return useMutation({
+    mutationFn: async (params: { commitId: string }) =>
+      writeContractAsync({
+        address: COMMIT_CONTRACT_ADDRESS,
+        abi: COMMIT_ABI,
+        functionName: 'claimCreator',
+        args: [BigInt(params.commitId)],
+      }).then((hash) => waitForEvent(hash, 'CreatorClaimed')),
+  })
+}
+
 // Get participants
 export function useGetCommitmentParticipants(commitId: number) {
   return useReadContract({

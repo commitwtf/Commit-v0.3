@@ -57,9 +57,10 @@ export function CreateCommitForm() {
     address!,
     COMMIT_CONTRACT_ADDRESS
   )
-  const token = useToken(tokenAddress)
+  const token = useToken(tokenAddress, address)
   const approve = useApprove(tokenAddress, COMMIT_CONTRACT_ADDRESS)
 
+  console.log(token.data)
   const transferAmount = parseUnits(
     String(Number(form.watch('stakeAmount') ?? 0) + Number(form.watch('creatorFee') ?? 0)),
     DECIMALS
@@ -194,7 +195,9 @@ export function CreateCommitForm() {
           Note: to prevent spam, creating commit costs 0.001ETH. Thank you for your support. Let's
           commit!
         </p>
-        {transferAmount > allowance ? (
+        {transferAmount > token.data?.value ? (
+          <div>Insufficient balance</div>
+        ) : transferAmount > allowance ? (
           <Button
             type='button'
             className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'

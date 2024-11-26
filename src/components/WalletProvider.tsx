@@ -18,6 +18,7 @@ const config = getDefaultConfig({
       name: 'Cyber',
       nativeCurrency: {
         decimals: 18,
+        name: 'ETH',
         symbol: 'ETH',
       },
       rpcUrls: {
@@ -29,7 +30,6 @@ const config = getDefaultConfig({
     7560: http('https://cyber.alt.technology'),
   },
   ssr: true,
-  enableCoolMode: true,
 })
 
 const rainbowKitTheme = {

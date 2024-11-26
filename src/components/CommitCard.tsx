@@ -31,7 +31,7 @@ export function CommitCard({ id, description, participants, stakeAmount }: Commi
   )
 }
 
-function TimeRemaining({ commitId }: { commitId: number }) {
+function TimeRemaining({ commitId }: { commitId: string }) {
   const { data: deadlines } = useGetCommitmentDeadlines(String(commitId))
   if (!deadlines?.length) return null
   return (

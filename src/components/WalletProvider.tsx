@@ -6,6 +6,7 @@ import { WagmiProvider } from 'wagmi'
 import { http } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
+import { mainnet } from 'viem/chains'
 
 const queryClient = new QueryClient()
 
@@ -25,9 +26,11 @@ const config = getDefaultConfig({
         default: { http: ['https://cyber.alt.technology'] },
       },
     },
+    mainnet,
   ],
   transports: {
     7560: http('https://cyber.alt.technology'),
+    1: http(mainnet.rpcUrls.default.http[0]),
   },
   ssr: true,
 })

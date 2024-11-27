@@ -30,8 +30,7 @@ const RewardsPage = () => {
             <AlertCircle className='w-4 h-4' />
             <div>
               <p className='mb-1'>
-                For all three Commits you joined and completed during the Phi: Cyber Safari, you'll
-                be eligible for $CYBER rewards. For a more detailed breakdown of the rewards, please{' '}
+                For all three Commits you joined and completed during the Phi: Cyber Safari, the $CYBER rewards will be available for you to claim ~24 hours after the campaign ends on Dec 07, 2024. For a more detailed breakdown of the rewards, please{' '}
                 <Link
                   href='https://www.notion.so/buildoncyber/Commit-Rewards-Breakdown-1360c7ec751f80328b05c0379b8695ac'
                   target='_blank'
@@ -114,7 +113,7 @@ function RewardCard({ creds, ...reward }: Reward & { creds: number[] }) {
         {status === 'Won' ? (
           <>
             <Check className='w-4 h-4 mr-2' />
-            Claim Reward
+            Claim Rewards on Dec 08, 2024
           </>
         ) : (
           <>

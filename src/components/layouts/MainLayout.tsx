@@ -14,7 +14,7 @@ export const MainLayout = ({ children }: PropsWithChildren) => {
         <Header />
         <div className='flex flex-1 overflow-hidden bg-[#E7E7E7] dark:bg-[#141414] transition-all duration-300 ease-in-out'>
           <Sidebar />
-          {children}
+          <div className='flex-1'>{children}</div>
         </div>
       </div>
     </StoreContextProvider>

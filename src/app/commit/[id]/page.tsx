@@ -1,29 +1,22 @@
 'use client'
-import { Button } from '@/components'
 import { TokenAmount } from '@/components/TokenAmount'
-import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import {
   CommitmentStatus,
-  useCommitmentToken,
   useGetCommitmentDeadlines,
   useGetCommitmentDetails,
-  useJoinCommitment,
 } from '@/hooks/useCommit'
-import { useAllowance, useApprove, useToken } from '@/hooks/useToken'
 import { formatSecondsToDays } from '@/utils/date'
-import { useQueryClient } from '@tanstack/react-query'
-import { PropsWithChildren, use } from 'react'
-import { useAccount } from 'wagmi'
+import { use } from 'react'
 import { User, Users, Clock, AlertCircle, Coins, Wallet } from 'lucide-react'
-import { Address, getAddress } from 'viem'
+import { getAddress } from 'viem'
 import { ResolveCommit } from '@/components/ResolveCommit'
 import { CancelCommit } from '@/components/CancelCommit'
 
 import { ClaimCommitCreatorFee } from '@/components/ClaimCommitCreatorFee'
 import { ClaimCommitRewards } from '@/components/ClaimCommitRewards'
-import { CheckBalance } from '@/components/CheckBalance'
 import { EnsName } from '@/components/ENS'
 import { rewards } from '@/data/rewards'
+import { JoinCommitmentButton } from '@/components/JoinCommit'
 
 function getRewardsDescription(id: string) {
   return rewards[Number(id) - 6]?.description
@@ -177,61 +170,5 @@ function TimeRemaining({ commitId = '' }) {
         {formatSecondsToDays(deadlines[1])}
       </div>
     </div>
-  )
-}
-
-function JoinCommitmentButton({
-  commitId,
-  participants,
-  stakeAmount,
-  creatorFee,
-}: {
-  commitId: string
-  participants?: Address[]
-  stakeAmount: { value: bigint; formatted: string; token: Address }
-  creatorFee: { value: bigint; formatted: string; token: Address }
-}) {
-  const { address } = useAccount()
-  const queryClient = useQueryClient()
-
-  const { data: token } = useCommitmentToken(commitId)
-  const { mutateAsync, isPending } = useJoinCommitment()
-
-  const allowance = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
-  const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)
-  const transferAmount = stakeAmount?.value + creatorFee?.value
-
-  if (participants?.includes(address!))
-    return <div className='flex justify-center'>Already joined</div>
-
-  if ((allowance.data ?? 0) < stakeAmount?.value)
-    return (
-      <Button
-        className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
-        isLoading={approve.isPending}
-        onClick={() =>
-          approve.writeContractAsync(BigInt(transferAmount)).then(() => {
-            void allowance.refetch()
-          })
-        }
-      >
-        Approve <TokenAmount {...stakeAmount} value={transferAmount} />
-      </Button>
-    )
-
-  return (
-    <CheckBalance className='w-full' amount={transferAmount} tokenAddress={token!}>
-      <Button
-        className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
-        isLoading={isPending}
-        onClick={() =>
-          mutateAsync({ commitId }).then(() => {
-            void queryClient.invalidateQueries({ queryKey: ['commitments'] })
-          })
-        }
-      >
-        Commit <TokenAmount {...stakeAmount} value={transferAmount} />
-      </Button>
-    </CheckBalance>
   )
 }

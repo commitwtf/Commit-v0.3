@@ -11,10 +11,6 @@ const HomePage = () => {
   const { error: walletError } = useWalletGuard()
   const { data: commits = [] } = useGetActiveCommitments()
 
-  const filteredCommits = [6, 7, 8]
-    .map((id) => commits.find((commit) => Number(commit.id) === id))
-    .filter((commit): commit is NonNullable<typeof commit> => commit !== undefined)
-
   return (
     <main className='flex-1 overflow-y-auto'>
       <div className='max-w-7xl mx-auto p-6'>
@@ -63,7 +59,7 @@ const HomePage = () => {
 
         {commits.length > 0 ? (
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {filteredCommits.map((commit) => (
+            {commits.map((commit) => (
               <CommitCard key={commit.id} {...commit} />
             ))}
           </div>

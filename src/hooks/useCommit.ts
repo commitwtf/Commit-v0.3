@@ -140,24 +140,9 @@ export function useGetCommitmentDeadlines(commitId: string) {
 export function useCreateCommitment() {
   const waitForEvent = useWaitForEvent(COMMIT_ABI)
 
-  const { writeContractAsync, data, error, failureReason } = useWriteContract()
+  const { writeContractAsync } = useWriteContract()
   const { data: PROTOCOL_CREATE_FEE } = useProtocolCreateFee()
-  const simulate = useSimulateContract({
-    abi: COMMIT_ABI,
-    address: COMMIT_CONTRACT_ADDRESS,
-    functionName: 'createCommitment',
-    args: [
-      '0x4200000000000000000000000000000000000006',
 
-      BigInt(100000000000000),
-      BigInt(0),
-      'testing 123',
-      BigInt(1732820640),
-      BigInt(1732647840),
-    ],
-    value: PROTOCOL_CREATE_FEE,
-    query: { enabled: Boolean(PROTOCOL_CREATE_FEE) },
-  })
   return useMutation({
     mutationFn: async (params: {
       tokenAddress: Address
@@ -214,6 +199,7 @@ export function useProtocolJoinFee() {
     functionName: 'PROTOCOL_JOIN_FEE',
   })
 }
+
 export function useProtocolCreateFee() {
   return useReadContract({
     address: COMMIT_CONTRACT_ADDRESS,
@@ -340,7 +326,11 @@ export function useCommitments(
 
 // Fetch active commitments
 export function useGetActiveCommitments() {
-  return useCommitments({ orderBy: 'id', orderDirection: 'desc' })
+  return useCommitments({
+    where: { id_in: ['6', '7', '8'] },
+    orderBy: 'id',
+    orderDirection: 'asc',
+  })
 }
 // User's commitments
 export function useUserCommitments(address?: Address) {

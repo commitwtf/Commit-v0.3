@@ -22,6 +22,7 @@ import { CancelCommit } from '@/components/CancelCommit'
 import { ClaimCommitCreatorFee } from '@/components/ClaimCommitCreatorFee'
 import { ClaimCommitRewards } from '@/components/ClaimCommitRewards'
 import { CheckBalance } from '@/components/CheckBalance'
+import { EnsName } from '@/components/ENS'
 
 export default function CommitmentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -81,7 +82,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               <div>
                 <div className='text-sm text-gray-500 dark:text-gray-400'>Creator</div>
                 <div className='font-mono text-sm text-gray-900 dark:text-white'>
-                  {data.creator?.address?.slice(0, 8)}...{data.creator?.address?.slice(-6)}
+                  <EnsName address={data.creator?.address} />
                 </div>
               </div>
             </div>

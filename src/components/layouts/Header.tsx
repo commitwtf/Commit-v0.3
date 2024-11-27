@@ -9,7 +9,7 @@ export const Header = () => (
   <div className='flex flex-col sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60'>
     <div className='w-full bg-[#2ecc71] dark:bg-[#1a5e1a] text-white py-2 px-4 text-center'>
       <span className='text-sm font-medium'>
-        50,000 $CYBER in Commit rewards!{' '}
+        $50,000 in CYBER in Commit rewards!{' '}
         <Link href='/rewards' className='underline hover:no-underline'>
           Learn more
         </Link>

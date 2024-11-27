@@ -25,24 +25,30 @@ const HomePage = () => {
             </p>
             <p>
               For the Phi: Cyber Safari campaign, there are three Commits ready for you to join! To
-              participate in any Commit, please ensure you have $0.001 ETH on the Cyber mainnet for
-              gas (visit{' '}
+              participate in any Commit, please ensure you have 0.001 $ETH on the Cyber mainnet for
+              gas — visit{' '}
               <Link
                 href='https://cyber.co/bridge'
                 className='text-blue-600 dark:text-blue-400 hover:underline'
               >
-                https://cyber.co/bridge
+                Cyber Bridge page
               </Link>{' '}
-              if needed). Additionally, you'll need $0.005 WETH to join each Commit (visit{' '}
+              if needed. Additionally, you'll need 0.0005 $WETH to join each Commit — visit {' '}
               <Link
                 href='https://cyberswap.cc/trade/swap'
                 className='text-blue-600 dark:text-blue-400 hover:underline'
               >
-                https://cyberswap.cc/trade/swap
+                CyberSwap
               </Link>{' '}
-              for ETH &lt;&gt; WETH conversion).
+              for ETH &lt;&gt; WETH conversion.
             </p>
-            <p>We hope you have fun!</p>
+            <p>We hope you have fun! To learn more about the exact steps to join and complete your Commit, please check the user guide {' '}
+              <Link
+                href='https://buildoncyber.notion.site/Phi-Cyber-Safari-User-Guide-1470c7ec751f80099008de1fb7f64943'
+                className='text-blue-600 dark:text-blue-400 hover:underline'
+              >
+                here
+              </Link>.</p>
           </div>
         </div>
 

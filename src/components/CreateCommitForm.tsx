@@ -23,7 +23,18 @@ import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import { useAccount } from 'wagmi'
 import { TokenAmount } from './TokenAmount'
 import { useQueryClient } from '@tanstack/react-query'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
+const tokens = [
+  {
+    label: 'WETH',
+    value: '0x4200000000000000000000000000000000000006',
+  },
+  {
+    label: 'CYBER',
+    value: '0x14778860e937f509e651192a90589de711fb88a9',
+  },
+]
 const CreateCommitmentSchema = z.object({
   tokenAddress: z.string().nonempty('Token address is required'),
   stakeAmount: z.number().min(0, 'Stake amount must be non-negative'),
@@ -62,7 +73,7 @@ export function CreateCommitForm() {
 
   console.log(token.data)
   const transferAmount = parseUnits(String(Number(form.watch('stakeAmount') ?? 0)), DECIMALS)
-
+  console.log(form.watch('tokenAddress'))
   const router = useRouter()
   const { mutateAsync, isPending, error, failureReason } = useCreateCommitment()
   console.log('comp', { error, failureReason })
@@ -113,9 +124,20 @@ export function CreateCommitForm() {
           render={({ field }) => (
             <FormItem>
               <FormLabel>Token Address</FormLabel>
-              <FormControl>
-                <Textarea placeholder='0x...' {...field} />
-              </FormControl>
+              <Select onValueChange={field.onChange} defaultValue={field.value}>
+                <FormControl>
+                  <SelectTrigger>
+                    <SelectValue placeholder='Select a token' />
+                  </SelectTrigger>
+                </FormControl>
+                <SelectContent>
+                  {tokens.map((token) => (
+                    <SelectItem key={token.value} value={token.value}>
+                      {token.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
               <FormMessage />
             </FormItem>
           )}

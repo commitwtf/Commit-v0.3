@@ -1,33 +1,16 @@
 'use client'
 
+import { rewards } from '@/data/rewards'
+import { usePhiCreds } from '@/hooks/usePhi'
 import { Button, Progress } from '@/src/components'
 import { Check, X, AlertCircle } from 'lucide-react'
+import { useAccount } from 'wagmi'
 
 const RewardsPage = () => {
-  const rewards = [
-    {
-      name: 'Basic Level Commit',
-      description: 'Collect a minimum of 2 Creds from the Phi: Cyber Safari campaign',
-      tokens: 1385,
-      progress: 0,
-      status: 'Not Eligible',
-    },
-    {
-      name: 'Medium Level Commit',
-      description: 'Collect a minimum of 4 Creds from the Phi: Cyber Safari campaign',
-      tokens: 4155,
-      progress: 0,
-      status: 'Not Eligible',
-    },
-    {
-      name: 'Ultimate Level Commit',
-      description: 'Collect all 8 Creds from the Phi: Cyber Safari campaign',
-      tokens: 8310,
-      progress: 0,
-      status: 'Not Eligible',
-    },
-  ]
+  const { address } = useAccount()
+  const phi = usePhiCreds(address)
 
+  console.log(phi.data, phi.error, phi.failureReason)
   return (
     <main className='flex-1 overflow-y-auto'>
       <div className='max-w-7xl mx-auto p-6'>
@@ -58,12 +41,13 @@ const RewardsPage = () => {
               <p className='text-gray-600 dark:text-gray-400 text-sm mb-4'>{reward.description}</p>
 
               <span
-                className={`absolute top-4 right-4 text-xs font-medium px-2 py-1 rounded-full ${reward.status === 'Won'
+                className={`absolute top-4 right-4 text-xs font-medium px-2 py-1 rounded-full ${
+                  reward.status === 'Won'
                     ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
                     : reward.status === 'In Progress'
-                      ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-                      : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
-                  }`}
+                    ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+                    : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+                }`}
               >
                 {reward.status}
               </span>
@@ -80,10 +64,11 @@ const RewardsPage = () => {
                 </div>
                 <Progress
                   value={reward.progress}
-                  className={`h-2 ${reward.status === 'Won'
+                  className={`h-2 ${
+                    reward.status === 'Won'
                       ? 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-black dark:[&>div]:bg-white'
                       : 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-gray-300 dark:[&>div]:bg-gray-600'
-                    }`}
+                  }`}
                 />
               </div>
 

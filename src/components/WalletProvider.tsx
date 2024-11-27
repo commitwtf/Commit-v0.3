@@ -6,29 +6,22 @@ import { WagmiProvider } from 'wagmi'
 import { http } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
+import { Chain, cyber, mainnet } from 'viem/chains'
 
 const queryClient = new QueryClient()
 
+const chains: [Chain, Chain] = [cyber, mainnet]
 const config = getDefaultConfig({
   appName: 'Commit',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
-  chains: [
-    {
-      id: 7560,
-      name: 'Cyber',
-      nativeCurrency: {
-        decimals: 18,
-        name: 'ETH',
-        symbol: 'ETH',
-      },
-      rpcUrls: {
-        default: { http: ['https://cyber.alt.technology'] },
-      },
-    },
-  ],
-  transports: {
-    7560: http('https://cyber.alt.technology'),
-  },
+  chains,
+  transports: chains.reduce(
+    (acc, x) => ({
+      ...acc,
+      [x.id]: http(x.rpcUrls.default.http[0]),
+    }),
+    {}
+  ),
   ssr: true,
 })
 

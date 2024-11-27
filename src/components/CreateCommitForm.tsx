@@ -63,11 +63,7 @@ export function CreateCommitForm() {
 
   const queryClient = useQueryClient()
   const tokenAddress = form.watch('tokenAddress') as Address
-  const { data: allowance = 0, queryKey } = useAllowance(
-    tokenAddress,
-    address!,
-    COMMIT_CONTRACT_ADDRESS
-  )
+  const allowance = useAllowance(tokenAddress, address!, COMMIT_CONTRACT_ADDRESS)
   const token = useToken(tokenAddress, address)
   const approve = useApprove(tokenAddress, COMMIT_CONTRACT_ADDRESS)
 
@@ -97,8 +93,8 @@ export function CreateCommitForm() {
             fulfillmentDeadline: Math.floor(new Date(values.fulfillmentDeadline) / 1000),
           }).then((res) => {
             console.log(res)
-            console.log(res)
-            // router.push('/commitments')
+            const commitId = res?.[0].args.id
+            router.push(`/commit/${commitId}`)
           })
         })}
       >
@@ -216,15 +212,13 @@ export function CreateCommitForm() {
         </p>
         {transferAmount > token.data?.value ? (
           <div>Insufficient balance</div>
-        ) : transferAmount > allowance ? (
+        ) : transferAmount > (allowance.data ?? 0) ? (
           <Button
             type='button'
             className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
             isLoading={approve.isPending}
             onClick={() =>
-              approve.writeContractAsync(BigInt(transferAmount)).then(() => {
-                void queryClient.invalidateQueries({ queryKey })
-              })
+              approve.writeContractAsync(BigInt(transferAmount)).then(() => allowance.refetch())
             }
           >
             Approve <TokenAmount value={transferAmount} token={tokenAddress} />

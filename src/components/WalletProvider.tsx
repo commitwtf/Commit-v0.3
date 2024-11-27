@@ -15,10 +15,13 @@ const config = getDefaultConfig({
   appName: 'Commit',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
   chains,
-  transports: chains.reduce((acc, x) => ({
-    ...acc,
-    [x.id]: http(x.rpcUrls.default.http[0]),
-  })),
+  transports: chains.reduce(
+    (acc, x) => ({
+      ...acc,
+      [x.id]: http(x.rpcUrls.default.http[0]),
+    }),
+    {}
+  ),
   ssr: true,
 })
 

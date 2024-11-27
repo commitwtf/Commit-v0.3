@@ -15,6 +15,7 @@ const config = getDefaultConfig({
   appName: 'Commit',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,
   chains,
+
   transports: chains.reduce(
     (acc, x) => ({
       ...acc,
@@ -48,7 +49,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <WagmiProvider config={config}>
       <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider theme={rainbowKitTheme} modalSize='compact'>
+        <RainbowKitProvider initialChain={cyber} theme={rainbowKitTheme} modalSize='compact'>
           {mounted && children}
         </RainbowKitProvider>
       </QueryClientProvider>

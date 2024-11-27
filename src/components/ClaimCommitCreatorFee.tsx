@@ -1,16 +1,20 @@
 'use client'
-import { useClaimCreatorFee, useGetCommitmentDetails, useIsCommitCreator } from '@/hooks/useCommit'
+import { useClaimCreatorFee, useIsCommitCreator } from '@/hooks/useCommit'
 import { Button } from './ui'
+import { useUpdateQueries } from '@/hooks/useUpdateQueries'
 
 export function ClaimCommitCreatorFee({ commitId = '' }) {
   const isCreator = useIsCommitCreator(commitId)
   const { mutateAsync, isPending } = useClaimCreatorFee()
-  const { refetch } = useGetCommitmentDetails(commitId)
+  const updateQueries = useUpdateQueries()
 
   if (!isCreator) return null
 
   return (
-    <Button isLoading={isPending} onClick={() => mutateAsync({ commitId }).then(() => refetch())}>
+    <Button
+      isLoading={isPending}
+      onClick={() => mutateAsync({ commitId }).then(() => updateQueries(['commitments', commitId]))}
+    >
       Claim Fee
     </Button>
   )

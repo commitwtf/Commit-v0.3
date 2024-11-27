@@ -15,8 +15,12 @@ import { CancelCommit } from '@/components/CancelCommit'
 import { ClaimCommitCreatorFee } from '@/components/ClaimCommitCreatorFee'
 import { ClaimCommitRewards } from '@/components/ClaimCommitRewards'
 import { EnsName } from '@/components/ENS'
+import { rewards } from '@/data/rewards'
 import { JoinCommitmentButton } from '@/components/JoinCommit'
 
+function getRewardsDescription(id: string) {
+  return rewards[Number(id) - 6]?.description
+}
 export default function CommitmentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { data, isError, isLoading } = useGetCommitmentDetails(id)
@@ -95,6 +99,9 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
                 <span className='text-gray-900 dark:text-white'>
                   <TokenAmount {...data.stakeAmount} />
                 </span>
+                <div className='text-xs text-gray-500 dark:text-gray-400 mt-0.5'>
+                  +0.0002 ETH protocol fee
+                </div>
               </div>
             </div>
 
@@ -113,9 +120,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
             <h2 className='text-base font-medium mb-1 text-gray-900 dark:text-white'>
               Description
             </h2>
-            <p className='text-sm text-gray-600 dark:text-gray-400'>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit.
-            </p>
+            <p className='text-sm text-gray-600 dark:text-gray-400'>{getRewardsDescription(id)}</p>
           </div>
 
           <div className='mb-6'>

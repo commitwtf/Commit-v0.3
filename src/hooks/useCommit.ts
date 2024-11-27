@@ -98,7 +98,7 @@ const COMMITMENTS_QUERY = gql`
 // Get commitment details
 export function useGetCommitmentDetails(commitId: string) {
   return useQuery({
-    queryKey: ['commitments', 'active', commitId],
+    queryKey: ['commitments', commitId],
     queryFn: () =>
       client
         .query<{
@@ -312,6 +312,7 @@ export function useCommitments(
   opts: { enabled: boolean } = { enabled: true }
 ) {
   return useQuery({
+    refetchInterval: 3000,
     enabled: opts.enabled,
     queryKey: ['commitments', filter],
     queryFn: () =>

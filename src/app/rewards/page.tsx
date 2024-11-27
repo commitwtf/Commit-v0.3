@@ -1,10 +1,16 @@
 'use client'
 
 import { rewards } from '@/data/rewards'
+import { usePhiCreds } from '@/hooks/usePhi'
 import { Button, Progress } from '@/src/components'
 import { Check, X, AlertCircle } from 'lucide-react'
+import { useAccount } from 'wagmi'
 
 const RewardsPage = () => {
+  const { address } = useAccount()
+  const phi = usePhiCreds(address)
+
+  console.log(phi.data, phi.error, phi.failureReason)
   return (
     <main className='flex-1 overflow-y-auto'>
       <div className='max-w-7xl mx-auto p-6'>

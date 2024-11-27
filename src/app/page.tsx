@@ -1,6 +1,5 @@
 'use client'
 
-import { AlertCircle } from 'lucide-react'
 import { CommitCard } from '@/src/components'
 import { useWalletGuard } from '@/hooks/useWalletGuard'
 import { useGetActiveCommitments } from '@/hooks/useCommit'
@@ -9,7 +8,7 @@ import Link from 'next/link'
 
 const HomePage = () => {
   const { error: walletError } = useWalletGuard()
-  const { data: commits = [] } = useGetActiveCommitments()
+  const { data: commits = [], isPending } = useGetActiveCommitments()
 
   return (
     <main className='flex-1 overflow-y-auto'>
@@ -33,7 +32,7 @@ const HomePage = () => {
               >
                 Cyber Bridge page
               </Link>{' '}
-              if needed. Additionally, you'll need 0.0005 $WETH to join each Commit — visit {' '}
+              if needed. Additionally, you'll need 0.0005 $WETH to join each Commit — visit{' '}
               <Link
                 href='https://cyberswap.cc/trade/swap'
                 className='text-blue-600 dark:text-blue-400 hover:underline'
@@ -42,13 +41,17 @@ const HomePage = () => {
               </Link>{' '}
               for ETH &lt;&gt; WETH conversion.
             </p>
-            <p>We hope you have fun! To learn more about the exact steps to join and complete your Commit, please check the user guide {' '}
+            <p>
+              We hope you have fun! To learn more about the exact steps to join and complete your
+              Commit, please check the user guide{' '}
               <Link
                 href='https://buildoncyber.notion.site/Phi-Cyber-Safari-User-Guide-1470c7ec751f80099008de1fb7f64943'
                 className='text-blue-600 dark:text-blue-400 hover:underline'
               >
                 here
-              </Link>.</p>
+              </Link>
+              .
+            </p>
           </div>
         </div>
 
@@ -60,16 +63,13 @@ const HomePage = () => {
             </span>
           </div>
         </div>
-
         <WalletError error={walletError} />
-
-        {commits.length > 0 ? (
-          <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
-            {commits.map((commit) => (
-              <CommitCard key={commit.id} {...commit} />
-            ))}
-          </div>
-        ) : (
+        <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
+          {(isPending ? createLoadingCards(3) : commits)?.map((commit) => (
+            <CommitCard key={commit.id} {...commit} />
+          ))}
+        </div>
+        {!isPending && !commits.length && (
           <div className='text-center py-12'>
             <p className='text-gray-500 dark:text-gray-400'>No active commits found.</p>
           </div>
@@ -77,6 +77,16 @@ const HomePage = () => {
       </div>
     </main>
   )
+}
+
+function createLoadingCards(length: number) {
+  return Array.from({ length })
+    .fill(0)
+    .map((_, id) => ({
+      id: String(id),
+      key: String(id),
+      isLoading: true,
+    }))
 }
 
 export default HomePage

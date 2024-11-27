@@ -3,13 +3,9 @@
 import { rewards } from '@/data/rewards'
 import { usePhiCreds } from '@/hooks/usePhi'
 import { Button, Progress } from '@/src/components'
-<<<<<<< HEAD
 import { Check, X, AlertCircle, ExternalLink } from 'lucide-react'
 import Link from 'next/link'
-=======
-import { Check, X, AlertCircle } from 'lucide-react'
 import { useAccount } from 'wagmi'
->>>>>>> 028712ebf87c1d8fdd3882e084c81c5858835fd3
 
 const RewardsPage = () => {
   const { address } = useAccount()
@@ -34,21 +30,24 @@ const RewardsPage = () => {
             <AlertCircle className='w-4 h-4' />
             <div>
               <p className='mb-1'>
-                For all three Commits you joined and completed during the Phi: Cyber Safari, you'll be eligible for $CYBER rewards. For a more detailed breakdown of the rewards, please{' '}
-                <Link 
-                  href="https://www.notion.so/buildoncyber/Commit-Rewards-Breakdown-1360c7ec751f80328b05c0379b8695ac"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-medium underline hover:text-blue-700 dark:hover:text-blue-300 inline-flex items-center"
+                For all three Commits you joined and completed during the Phi: Cyber Safari, you'll
+                be eligible for $CYBER rewards. For a more detailed breakdown of the rewards, please{' '}
+                <Link
+                  href='https://www.notion.so/buildoncyber/Commit-Rewards-Breakdown-1360c7ec751f80328b05c0379b8695ac'
+                  target='_blank'
+                  rel='noopener noreferrer'
+                  className='font-medium underline hover:text-blue-700 dark:hover:text-blue-300 inline-flex items-center'
                 >
                   check here
-                  <ExternalLink className="w-3 h-3 ml-1" />
-                </Link>.
-                </p>
-                <p className='mt-1 font-medium'>
-                One lucky player who completes the Ultimate-level Commit will take home $5K worth of CYBER. Will you be the lucky one, anon?
-                </p>
-                </div>
+                  <ExternalLink className='w-3 h-3 ml-1' />
+                </Link>
+                .
+              </p>
+              <p className='mt-1 font-medium'>
+                One lucky player who completes the Ultimate-level Commit will take home $5K worth of
+                CYBER. Will you be the lucky one, anon?
+              </p>
+            </div>
           </div>
         </div>
 
@@ -112,8 +111,8 @@ const RewardsPage = () => {
             </div>
           ))}
         </div>
-      </div >
-    </main >
+      </div>
+    </main>
   )
 }
 

@@ -57,7 +57,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
                 Commit #{id}
               </span>
             </div>
-            <CancelCommit commitId={data?.id} />
+            {data?.participants.length < 2 && <CancelCommit commitId={data?.id} />}
             <ClaimCommitCreatorFee commitId={data?.id} />
             <ClaimCommitRewards commitId={data?.id} />
           </div>

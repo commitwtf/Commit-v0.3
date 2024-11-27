@@ -325,7 +325,7 @@ export function useGetActiveCommitments() {
   return useCommitments({
     where: { id_in: ['6', '7', '8'] },
     orderBy: 'id',
-    orderDirection: 'desc',
+    orderDirection: 'asc',
   })
 }
 // User's commitments

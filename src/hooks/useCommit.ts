@@ -308,6 +308,7 @@ export function useCommitments(
   opts: { enabled: boolean } = { enabled: true }
 ) {
   return useQuery({
+    refetchInterval: 3000,
     enabled: opts.enabled,
     queryKey: ['commitments', filter],
     queryFn: () =>

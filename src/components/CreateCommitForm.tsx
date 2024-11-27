@@ -86,7 +86,7 @@ export function CreateCommitForm() {
             fulfillmentDeadline: Math.floor(new Date(values.fulfillmentDeadline) / 1000),
           }).then((res) => {
             console.log(res)
-            alert(`Created: ${JSON.stringify(res)}`)
+            console.log(res)
             // router.push('/commitments')
           })
         })}

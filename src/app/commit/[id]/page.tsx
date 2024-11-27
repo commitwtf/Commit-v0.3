@@ -9,10 +9,10 @@ import {
   useGetCommitmentDetails,
   useJoinCommitment,
 } from '@/hooks/useCommit'
-import { useAllowance, useApprove } from '@/hooks/useToken'
+import { useAllowance, useApprove, useToken } from '@/hooks/useToken'
 import { formatSecondsToDays } from '@/utils/date'
 import { useQueryClient } from '@tanstack/react-query'
-import { use } from 'react'
+import { PropsWithChildren, use } from 'react'
 import { useAccount } from 'wagmi'
 import { User, Users, Clock, AlertCircle, Coins, Wallet } from 'lucide-react'
 import { Address, getAddress } from 'viem'
@@ -21,6 +21,8 @@ import { CancelCommit } from '@/components/CancelCommit'
 
 import { ClaimCommitCreatorFee } from '@/components/ClaimCommitCreatorFee'
 import { ClaimCommitRewards } from '@/components/ClaimCommitRewards'
+import { CheckBalance } from '@/components/CheckBalance'
+import { EnsName } from '@/components/ENS'
 
 export default function CommitmentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
@@ -80,7 +82,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               <div>
                 <div className='text-sm text-gray-500 dark:text-gray-400'>Creator</div>
                 <div className='font-mono text-sm text-gray-900 dark:text-white'>
-                  {data.creator?.address?.slice(0, 8)}...{data.creator?.address?.slice(-6)}
+                  <EnsName address={data.creator?.address} />
                 </div>
               </div>
             </div>
@@ -193,21 +195,21 @@ function JoinCommitmentButton({
   const { data: token } = useCommitmentToken(commitId)
   const { mutateAsync, isPending } = useJoinCommitment()
 
-  const { data: allowance = 0, queryKey } = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
+  const allowance = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
   const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)
   const transferAmount = stakeAmount?.value + creatorFee?.value
 
   if (participants?.includes(address!))
     return <div className='flex justify-center'>Already joined</div>
 
-  if (allowance < stakeAmount?.value)
+  if ((allowance.data ?? 0) < stakeAmount?.value)
     return (
       <Button
         className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
         isLoading={approve.isPending}
         onClick={() =>
           approve.writeContractAsync(BigInt(transferAmount)).then(() => {
-            void queryClient.invalidateQueries({ queryKey })
+            void allowance.refetch()
           })
         }
       >
@@ -216,16 +218,18 @@ function JoinCommitmentButton({
     )
 
   return (
-    <Button
-      className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
-      isLoading={isPending}
-      onClick={() =>
-        mutateAsync({ commitId }).then(() => {
-          void queryClient.invalidateQueries({ queryKey })
-        })
-      }
-    >
-      Commit <TokenAmount {...stakeAmount} value={transferAmount} />
-    </Button>
+    <CheckBalance className='w-full' amount={transferAmount} tokenAddress={token!}>
+      <Button
+        className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
+        isLoading={isPending}
+        onClick={() =>
+          mutateAsync({ commitId }).then(() => {
+            void queryClient.invalidateQueries({ queryKey: ['commitments'] })
+          })
+        }
+      >
+        Commit <TokenAmount {...stakeAmount} value={transferAmount} />
+      </Button>
+    </CheckBalance>
   )
 }

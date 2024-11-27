@@ -98,7 +98,7 @@ const COMMITMENTS_QUERY = gql`
 // Get commitment details
 export function useGetCommitmentDetails(commitId: string) {
   return useQuery({
-    queryKey: ['commitments', 'active'],
+    queryKey: ['commitments', 'active', commitId],
     queryFn: () =>
       client
         .query<{
@@ -158,9 +158,6 @@ export function useCreateCommitment() {
     value: PROTOCOL_CREATE_FEE,
     query: { enabled: Boolean(PROTOCOL_CREATE_FEE) },
   })
-  console.log(PROTOCOL_CREATE_FEE)
-  console.log('simulate', simulate.data, simulate.error, simulate)
-  console.log('hook', { data, error, failureReason })
   return useMutation({
     mutationFn: async (params: {
       tokenAddress: Address
@@ -170,7 +167,6 @@ export function useCreateCommitment() {
       joinDeadline: number
       fulfillmentDeadline: number
     }) => {
-      console.log('-----', params)
       return (
         PROTOCOL_CREATE_FEE &&
         writeContractAsync({
@@ -190,45 +186,6 @@ export function useCreateCommitment() {
       )
     },
   })
-
-  // const { writeContract, isPending } = useWriteContract()
-  // const [hash, setHash] = useState<Address>()
-  // const {
-  //   data,
-  //   isLoading: isConfirming,
-  //   isSuccess,
-  // } = useWaitForTransactionReceipt({
-  //   hash,
-  // })
-  // const createCommitment = async (params: CreateCommitmentParams) => {
-  //   try {
-  //     const tx = await writeContract({
-  //       address: COMMIT_CONTRACT_ADDRESS,
-  //       abi: COMMIT_ABI,
-  //       functionName: 'createCommitment',
-  //       args: [
-  // getAddress(params.tokenAddress),
-  // params.stakeAmount,
-  // params.joinFee,
-  // params.description,
-  // BigInt(params.joinDeadline),
-  // BigInt(params.fulfillmentDeadline),
-  //       ],
-  //       value: BigInt(1000000000000000),
-  //     })
-  //     if (tx) setHash(tx)
-  //     return tx
-  //   } catch (error) {
-  //     console.error('Contract error:', error)
-  //     throw error
-  //   }
-  // }
-  // return {
-  //   createCommitment,
-  //   isLoading: isPending || isConfirming,
-  //   isSuccess,
-  //   txHash: data?.transactionHash,
-  // }
 }
 
 // Join commitment

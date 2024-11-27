@@ -97,7 +97,7 @@ const COMMITMENTS_QUERY = gql`
 // Get commitment details
 export function useGetCommitmentDetails(commitId: string) {
   return useQuery({
-    queryKey: ['commitments', 'active', commitId],
+    queryKey: ['commitments', commitId],
     queryFn: () =>
       client
         .query<{

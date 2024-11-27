@@ -10,9 +10,16 @@ export function useWaitForEvent(abi: readonly unknown[]) {
     if (!client) throw new Error('WalletClient not found')
     return pRetry(
       () =>
-        getTransactionReceipt(client, { hash }).then(({ logs }) =>
-          parseEventLogs({ abi, logs, eventName })
-        ),
+        getTransactionReceipt(client, { hash })
+          .then(({ logs }) => {
+            console.log('wait for event', logs)
+            return parseEventLogs({ abi, logs, eventName })
+          })
+          .then((r) => {
+            console.log('wait for event 2', r)
+
+            return r
+          }),
       { retries: 5 }
     )
   }

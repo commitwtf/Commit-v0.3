@@ -1,16 +1,24 @@
 'use client'
-import { useClaimCreatorFee, useGetCommitmentDetails, useIsCommitCreator } from '@/hooks/useCommit'
+import { useQueryClient } from '@tanstack/react-query'
+import { useClaimCreatorFee, useIsCommitCreator } from '@/hooks/useCommit'
 import { Button } from './ui'
 
 export function ClaimCommitCreatorFee({ commitId = '' }) {
   const isCreator = useIsCommitCreator(commitId)
   const { mutateAsync, isPending } = useClaimCreatorFee()
-  const { refetch } = useGetCommitmentDetails(commitId)
+  const queryClient = useQueryClient()
 
   if (!isCreator) return null
 
   return (
-    <Button isLoading={isPending} onClick={() => mutateAsync({ commitId }).then(() => refetch())}>
+    <Button
+      isLoading={isPending}
+      onClick={() =>
+        mutateAsync({ commitId }).then(() =>
+          queryClient.invalidateQueries({ queryKey: ['commitments', commitId] })
+        )
+      }
+    >
       Claim Fee
     </Button>
   )

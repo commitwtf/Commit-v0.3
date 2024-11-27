@@ -55,7 +55,8 @@ export function JoinCommitmentButton({
         className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
         isLoading={isPending}
         onClick={() =>
-          mutateAsync({ commitId }).then(() => {
+          mutateAsync({ commitId, ...rest }).then(() => {
+            console.log(rest)
             void queryClient.invalidateQueries({ queryKey: ['commitments'] })
           })
         }

@@ -3,13 +3,13 @@ import { useClaimRewards, useGetCommitmentDetails } from '@/hooks/useCommit'
 import { Button } from './ui'
 import { useAccount } from 'wagmi'
 import { getAddress } from 'viem'
-import { useQueryClient } from '@tanstack/react-query'
+import { useUpdateQueries } from '@/hooks/useUpdateQueries'
 
 export function ClaimCommitRewards({ commitId = '' }) {
   const { address } = useAccount()
   const { mutateAsync, isPending } = useClaimRewards()
   const { data } = useGetCommitmentDetails(commitId)
-  const queryClient = useQueryClient()
+  const updateQueries = useUpdateQueries()
 
   // Only winners can see the Claim button
   const winners = data?.winners.map((p) => getAddress(p.address))
@@ -18,11 +18,7 @@ export function ClaimCommitRewards({ commitId = '' }) {
   return (
     <Button
       isLoading={isPending}
-      onClick={() =>
-        mutateAsync({ commitId }).then(() =>
-          queryClient.invalidateQueries({ queryKey: ['commitments', commitId] })
-        )
-      }
+      onClick={() => mutateAsync({ commitId }).then(() => updateQueries(['commitments', commitId]))}
     >
       Claim Rewards
     </Button>

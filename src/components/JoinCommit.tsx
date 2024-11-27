@@ -4,11 +4,11 @@ import { TokenAmount } from '@/components/TokenAmount'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import { useCommitmentToken, useJoinCommitment } from '@/hooks/useCommit'
 import { useAllowance, useApprove } from '@/hooks/useToken'
-import { useQueryClient } from '@tanstack/react-query'
 import { useAccount } from 'wagmi'
 import { Address } from 'viem'
 
 import { CheckBalance } from '@/components/CheckBalance'
+import { useUpdateQueries } from '@/hooks/useUpdateQueries'
 
 export function JoinCommitmentButton({
   commitId,
@@ -22,10 +22,10 @@ export function JoinCommitmentButton({
   creatorFee: { value: bigint; formatted: string; token: Address }
 }) {
   const { address } = useAccount()
-  const queryClient = useQueryClient()
 
   const { data: token } = useCommitmentToken(commitId)
   const { mutateAsync, isPending } = useJoinCommitment()
+  const updateQueries = useUpdateQueries()
 
   const allowance = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
   const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)
@@ -55,10 +55,7 @@ export function JoinCommitmentButton({
         className='w-full bg-[#CECECE] hover:bg-[#BEBEBE] text-gray-900 h-10 text-sm font-medium transition-colors rounded-lg'
         isLoading={isPending}
         onClick={() =>
-          mutateAsync({ commitId, ...rest }).then(() => {
-            console.log(rest)
-            void queryClient.invalidateQueries({ queryKey: ['commitments'] })
-          })
+          mutateAsync({ commitId }).then(() => updateQueries(['commitments', commitId]))
         }
       >
         Commit <TokenAmount {...stakeAmount} value={transferAmount} />

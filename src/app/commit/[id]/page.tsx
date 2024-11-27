@@ -22,8 +22,8 @@ import { CancelCommit } from '@/components/CancelCommit'
 import { ClaimCommitCreatorFee } from '@/components/ClaimCommitCreatorFee'
 import { ClaimCommitRewards } from '@/components/ClaimCommitRewards'
 import { CheckBalance } from '@/components/CheckBalance'
-import { rewards } from '@/app/rewards/page'
 import { EnsName } from '@/components/ENS'
+import { rewards } from '@/data/rewards'
 
 function getRewardsDescription(id: string) {
   return rewards[Number(id) - 6]?.description

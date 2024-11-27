@@ -99,6 +99,9 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
                 <span className='text-gray-900 dark:text-white'>
                   <TokenAmount {...data.stakeAmount} />
                 </span>
+                <div className='text-xs text-gray-500 dark:text-gray-400 mt-0.5'>
+                  +0.0002 ETH protocol fee
+                </div>
               </div>
             </div>
 

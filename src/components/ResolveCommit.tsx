@@ -10,6 +10,7 @@ import { Label } from './ui/label'
 import { Button } from './ui'
 import { useState } from 'react'
 import { Address, getAddress } from 'viem'
+import { EnsName } from './ENS'
 
 export function ResolveCommit({ commitId = '' }) {
   const [selectedWinners, setWinners] = useState<Record<Address, boolean>>({})
@@ -32,7 +33,7 @@ export function ResolveCommit({ commitId = '' }) {
                 setWinners((s) => ({ ...s, [participant.address]: isSelected }))
               }
             />
-            <pre>{participant.address}</pre>
+            <EnsName address={participant.address!} />
           </Label>
         </div>
       ))}

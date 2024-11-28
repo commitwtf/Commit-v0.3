@@ -20,7 +20,6 @@ import { useAllowance, useApprove, useToken } from '@/hooks/useToken'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import { useAccount } from 'wagmi'
 import { TokenAmount } from './TokenAmount'
-import { useQueryClient } from '@tanstack/react-query'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
 
 const tokens = [
@@ -59,7 +58,6 @@ export function CreateCommitForm() {
     },
   })
 
-  const queryClient = useQueryClient()
   const tokenAddress = form.watch('tokenAddress') as Address
   const allowance = useAllowance(tokenAddress, address!, COMMIT_CONTRACT_ADDRESS)
   const token = useToken(tokenAddress, address)
@@ -94,9 +92,9 @@ export function CreateCommitForm() {
             description: values.description,
             joinDeadline,
             fulfillmentDeadline,
-          }).then((res: any) => {
+          }).then((res) => {
             console.log(res)
-            const commitId = res?.[0].args.id
+            const commitId = (res as unknown as [{ args: { id: string } }])?.[0].args.id
             router.push(`/commit/${commitId}`)
           })
         })}
@@ -213,7 +211,7 @@ export function CreateCommitForm() {
           Note: to prevent spam, creating commit costs 0.001ETH. Thank you for your support. Let's
           commit!
         </p>
-        {transferAmount > token.data?.value ? (
+        {transferAmount > (token.data?.value ?? 0) ? (
           <div>Insufficient balance</div>
         ) : transferAmount > (allowance.data ?? 0) ? (
           <Button

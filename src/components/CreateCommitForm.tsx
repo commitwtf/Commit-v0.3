@@ -7,15 +7,13 @@ import { Address, getAddress, parseUnits } from 'viem'
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
-import { Input } from '@/components/ui/input'
+import { Input } from '@/components/ui/Input'
 import { Button } from '@/components/ui/Button'
-import { Textarea } from '@/components/ui/textarea'
 import { useRouter } from 'next/navigation'
 import { useCreateCommitment } from '@/hooks/useCommit'
 import { useAllowance, useApprove, useToken } from '@/hooks/useToken'
@@ -84,14 +82,19 @@ export function CreateCommitForm() {
           const creatorFee = parseUnits(String(values.creatorFee), DECIMALS)
 
           console.log(stakeAmount, creatorFee)
+
+          const joinDeadline = Math.floor(Number(new Date(values.joinDeadline)) / 1000)
+          const fulfillmentDeadline = Math.floor(
+            Number(new Date(values.fulfillmentDeadline)) / 1000
+          )
           return mutateAsync({
             tokenAddress: getAddress(values.tokenAddress),
             stakeAmount,
             creatorFee,
             description: values.description,
-            joinDeadline: Math.floor(new Date(values.joinDeadline) / 1000),
-            fulfillmentDeadline: Math.floor(new Date(values.fulfillmentDeadline) / 1000),
-          }).then((res) => {
+            joinDeadline,
+            fulfillmentDeadline,
+          }).then((res: any) => {
             console.log(res)
             const commitId = res?.[0].args.id
             router.push(`/commit/${commitId}`)
@@ -108,7 +111,7 @@ export function CreateCommitForm() {
             <FormItem>
               <FormLabel>Description</FormLabel>
               <FormControl>
-                <Textarea placeholder='Detailed overview' {...field} />
+                <Input placeholder='Detailed overview' {...field} />
               </FormControl>
               <FormMessage />
             </FormItem>

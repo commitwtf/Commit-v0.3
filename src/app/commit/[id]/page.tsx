@@ -17,6 +17,8 @@ import { ClaimCommitRewards } from '@/components/ClaimCommitRewards'
 import { EnsName } from '@/components/ENS'
 import { rewards } from '@/data/rewards'
 import { JoinCommitmentButton } from '@/components/JoinCommit'
+import { notFound } from 'next/navigation'
+
 import { EnsureCorrectNetwork } from '@/components/EnsureCorrectNetwork'
 
 function getRewardsDescription(id: string) {
@@ -25,7 +27,6 @@ function getRewardsDescription(id: string) {
 export default function CommitmentPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params)
   const { data, isError, isLoading } = useGetCommitmentDetails(id)
-
   if (isLoading) {
     return (
       <main className='flex-1 overflow-y-auto'>
@@ -36,6 +37,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
     )
   }
   console.log(data)
+  if (!data) return notFound()
   if (isError || !data) {
     return (
       <main className='flex-1 overflow-y-auto'>
@@ -59,6 +61,10 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               </span>
             </div>
             <EnsureCorrectNetwork>
+              {data?.participants.length < 2 && <CancelCommit commitId={data?.id} />}
+              <ClaimCommitCreatorFee commitId={data?.id} />
+              <ClaimCommitRewards commitId={data?.id} />
+
               <CancelCommit commitId={data?.id} />
               <ClaimCommitCreatorFee commitId={data?.id} />
               <ClaimCommitRewards commitId={data?.id} />

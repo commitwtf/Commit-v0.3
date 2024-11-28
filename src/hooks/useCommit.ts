@@ -224,6 +224,15 @@ export function useCommitmentToken(commitId: string) {
   })
 }
 
+export function useCommitmentCreatorClaim(commitId: string) {
+  return useReadContract({
+    address: COMMIT_CONTRACT_ADDRESS,
+    abi: COMMIT_ABI,
+    functionName: 'getCommitmentCreatorClaim',
+    args: [BigInt(commitId)],
+  })
+}
+
 // Resolve commitment
 export function useResolveCommitment() {
   const contracts = useConfig()

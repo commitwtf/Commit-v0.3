@@ -6,11 +6,14 @@ import { WagmiProvider } from 'wagmi'
 import { http } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
-import { Chain, cyber, mainnet } from 'viem/chains'
+import { Chain, cyber, hardhat, mainnet } from 'viem/chains'
 
 const queryClient = new QueryClient()
 
 const chains: [Chain, Chain] = [cyber, mainnet]
+
+if (process.env.NODE_ENV !== 'production') chains.push(hardhat)
+
 const config = getDefaultConfig({
   appName: 'Commit',
   projectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID!,

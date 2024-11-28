@@ -21,17 +21,8 @@ import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import { useAccount } from 'wagmi'
 import { TokenAmount } from './TokenAmount'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select'
+import { useConfig } from '@/hooks/useConfig'
 
-const tokens = [
-  {
-    label: 'WETH',
-    value: '0x4200000000000000000000000000000000000006',
-  },
-  {
-    label: 'CYBER',
-    value: '0x14778860e937f509e651192a90589de711fb88a9',
-  },
-]
 const CreateCommitmentSchema = z.object({
   tokenAddress: z.string().nonempty('Token address is required'),
   stakeAmount: z.number().min(0, 'Stake amount must be non-negative'),
@@ -43,11 +34,14 @@ const CreateCommitmentSchema = z.object({
 
 const DECIMALS = 18
 export function CreateCommitForm() {
+  const config = useConfig()
+
+  console.log('-----', config)
   const { address } = useAccount()
   const form = useForm<z.infer<typeof CreateCommitmentSchema>>({
     resolver: zodResolver(CreateCommitmentSchema),
     defaultValues: {
-      tokenAddress: '0x4200000000000000000000000000000000000006',
+      tokenAddress: config.tokens[0],
       stakeAmount: 0.0001,
       creatorFee: 0.0001,
       description: '',
@@ -63,12 +57,10 @@ export function CreateCommitForm() {
   const token = useToken(tokenAddress, address)
   const approve = useApprove(tokenAddress, COMMIT_CONTRACT_ADDRESS)
 
-  console.log(token.data)
   const transferAmount = parseUnits(String(Number(form.watch('stakeAmount') ?? 0)), DECIMALS)
   console.log(form.watch('tokenAddress'))
   const router = useRouter()
   const { mutateAsync, isPending, error, failureReason } = useCreateCommitment()
-  console.log('comp', { error, failureReason })
   return (
     <Form {...form}>
       <form
@@ -128,10 +120,8 @@ export function CreateCommitForm() {
                   </SelectTrigger>
                 </FormControl>
                 <SelectContent>
-                  {tokens.map((token) => (
-                    <SelectItem key={token.value} value={token.value}>
-                      {token.label}
-                    </SelectItem>
+                  {config.tokens.map((token) => (
+                    <TokenSelectItem key={token} address={token} />
                   ))}
                 </SelectContent>
               </Select>
@@ -236,4 +226,11 @@ export function CreateCommitForm() {
       </form>
     </Form>
   )
+}
+
+function TokenSelectItem({ address }: { address: Address }) {
+  const token = useToken(address)
+
+  console.log('token', token.data)
+  return <SelectItem value={address}>{token.data?.symbol}</SelectItem>
 }

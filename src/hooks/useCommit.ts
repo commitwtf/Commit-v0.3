@@ -225,8 +225,9 @@ export function useCommitmentToken(commitId: string) {
 }
 
 export function useCommitmentCreatorClaim(commitId: string) {
+  const contracts = useConfig()
   return useReadContract({
-    address: COMMIT_CONTRACT_ADDRESS,
+    address: contracts.protocol,
     abi: COMMIT_ABI,
     functionName: 'getCommitmentCreatorClaim',
     args: [BigInt(commitId)],

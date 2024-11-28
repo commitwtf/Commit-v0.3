@@ -36,6 +36,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
       </main>
     )
   }
+  console.log(data)
   if (!data) return notFound()
   if (isError || !data) {
     return (
@@ -59,16 +60,15 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
                 Commit #{id}
               </span>
             </div>
-          <EnsureCorrectNetwork>
-            {data?.participants.length < 2 && <CancelCommit commitId={data?.id} />}
-            <ClaimCommitCreatorFee commitId={data?.id} />
-            <ClaimCommitRewards commitId={data?.id} />
-         
+            <EnsureCorrectNetwork>
+              {data?.participants.length < 2 && <CancelCommit commitId={data?.id} />}
+              <ClaimCommitCreatorFee commitId={data?.id} />
+              <ClaimCommitRewards commitId={data?.id} />
+
               <CancelCommit commitId={data?.id} />
               <ClaimCommitCreatorFee commitId={data?.id} />
               <ClaimCommitRewards commitId={data?.id} />
             </EnsureCorrectNetwork>
-
           </div>
         </div>
 

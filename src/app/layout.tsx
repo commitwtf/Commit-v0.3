@@ -6,6 +6,9 @@ import { WalletProvider } from '@/src/components/WalletProvider'
 export const metadata: Metadata = {
   title: 'Commit',
   description: 'Onchain accountability protocol',
+  icons: {
+    icon: '/assets/images/favicon.svg',
+  },
 }
 
 const RootLayout = ({

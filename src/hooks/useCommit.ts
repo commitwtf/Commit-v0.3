@@ -84,7 +84,7 @@ const COMMITMENTS_QUERY = gql`
       creatorFee
       creatorFee
       status
-      participants {
+      participants(first: 1000) {
         address
       }
       winners {

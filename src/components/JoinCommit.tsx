@@ -2,10 +2,10 @@
 import { Button } from '@/components'
 import { TokenAmount } from '@/components/TokenAmount'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
-import { useCommitmentToken, useJoinCommitment } from '@/hooks/useCommit'
+import { useCommitmentToken, useJoinCommitment, useProtocolJoinFee } from '@/hooks/useCommit'
 import { useAllowance, useApprove } from '@/hooks/useToken'
 import { useAccount } from 'wagmi'
-import { Address } from 'viem'
+import { Address, formatEther } from 'viem'
 
 import { CheckBalance } from '@/components/CheckBalance'
 import { useUpdateQueries } from '@/hooks/useUpdateQueries'
@@ -26,6 +26,7 @@ export function JoinCommitmentButton({
   const { data: token } = useCommitmentToken(commitId)
   const { mutateAsync, isPending } = useJoinCommitment()
   const updateQueries = useUpdateQueries()
+  const { data: protocolFee } = useProtocolJoinFee()
 
   const allowance = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
   const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)
@@ -60,6 +61,9 @@ export function JoinCommitmentButton({
       >
         Commit <TokenAmount {...stakeAmount} value={transferAmount} />
       </Button>
+      <div className='flex justify-center text-sm text-gray-600 py-2'>
+        +{formatEther(protocolFee!)} ETH to join
+      </div>
     </CheckBalance>
   )
 }

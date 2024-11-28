@@ -18,7 +18,7 @@ const PHI_CONTRACT_ABI = [
 ] as const
 
 export function usePhiCreds(address?: Address) {
-  const credCount = 7
+  const credCount = 8
   const { data, ...rest } = useReadContracts({
     allowFailure: false,
     query: { enabled: Boolean(address) },

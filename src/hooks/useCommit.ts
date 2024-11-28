@@ -342,7 +342,7 @@ export function useCommitments(
       client
         .query<{
           commitments: CommitmentGraphQL[]
-        }>(COMMITMENTS_QUERY, { filter })
+        }>(COMMITMENTS_QUERY, filter)
         .toPromise()
         .then((r) => r.data?.commitments.map(mapCommitment)),
   })

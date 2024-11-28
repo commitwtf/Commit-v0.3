@@ -87,7 +87,8 @@ export function CreateCommitForm() {
           }).then((res) => {
             console.log(res)
             const commitId = (res as unknown as [{ args: { id: string } }])?.[0].args.id
-            router.push(`/commit/${commitId}`)
+            // Delay 2s for indexer to catch up (could be better solution)
+            setTimeout(() => router.push(`/commit/${commitId}`), 2000)
           })
         })}
       >

@@ -28,6 +28,8 @@ const HomePage = () => {
               gas — visit{' '}
               <Link
                 href='https://cyber.co/bridge'
+                target='_blank'
+                rel='noopener noreferrer'
                 className='text-blue-600 dark:text-blue-400 hover:underline'
               >
                 Cyber Bridge page
@@ -35,6 +37,8 @@ const HomePage = () => {
               if needed. Additionally, you'll need 0.0005 $WETH to join each Commit — visit{' '}
               <Link
                 href='https://cyberswap.cc/trade/swap'
+                target='_blank'
+                rel='noopener noreferrer'
                 className='text-blue-600 dark:text-blue-400 hover:underline'
               >
                 CyberSwap
@@ -46,6 +50,8 @@ const HomePage = () => {
               Commit, please check the user guide{' '}
               <Link
                 href='https://buildoncyber.notion.site/Phi-Cyber-Safari-User-Guide-1470c7ec751f80099008de1fb7f64943'
+                target='_blank'
+                rel='noopener noreferrer'
                 className='text-blue-600 dark:text-blue-400 hover:underline'
               >
                 here

@@ -17,6 +17,7 @@ import { ClaimCommitRewards } from '@/components/ClaimCommitRewards'
 import { EnsName } from '@/components/ENS'
 import { rewards } from '@/data/rewards'
 import { JoinCommitmentButton } from '@/components/JoinCommit'
+import { EnsureCorrectNetwork } from '@/components/EnsureCorrectNetwork'
 
 function getRewardsDescription(id: string) {
   return rewards[Number(id) - 6]?.description
@@ -57,9 +58,11 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
                 Commit #{id}
               </span>
             </div>
-            <CancelCommit commitId={data?.id} />
-            <ClaimCommitCreatorFee commitId={data?.id} />
-            <ClaimCommitRewards commitId={data?.id} />
+            <EnsureCorrectNetwork>
+              <CancelCommit commitId={data?.id} />
+              <ClaimCommitCreatorFee commitId={data?.id} />
+              <ClaimCommitRewards commitId={data?.id} />
+            </EnsureCorrectNetwork>
           </div>
         </div>
 
@@ -134,12 +137,14 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
             switch (data.status) {
               case CommitmentStatus.Created: {
                 return (
-                  <JoinCommitmentButton
-                    commitId={id}
-                    participants={data.participants?.map((p) => getAddress(p.address))}
-                    stakeAmount={data.stakeAmount}
-                    creatorFee={data.creatorFee}
-                  />
+                  <EnsureCorrectNetwork>
+                    <JoinCommitmentButton
+                      commitId={id}
+                      participants={data.participants?.map((p) => getAddress(p.address))}
+                      stakeAmount={data.stakeAmount}
+                      creatorFee={data.creatorFee}
+                    />
+                  </EnsureCorrectNetwork>
                 )
               }
               // TODO: Add actions Resolved and Cancelled

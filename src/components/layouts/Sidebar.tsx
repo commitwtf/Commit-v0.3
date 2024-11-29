@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/src/components/ui/Button'
 import { NavItems } from './NavItems'
+import { WrapETH } from '../WrapETH'
 
 export function Sidebar() {
   return (
@@ -10,19 +11,7 @@ export function Sidebar() {
       <div className='flex flex-col h-full'>
         <div className='flex-grow p-4 space-y-2'>
           <NavItems />
-          <Link
-            href="https://cyberswap.cc/trade/swap"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block w-full mb-4"
-          >
-            <Button
-              variant="outline"
-              className="w-full bg-[#DCDCDC] dark:bg-[#2A2A2A] text-gray-900 dark:text-[#E0E0E0] hover:bg-[#CECECE] dark:hover:bg-[#3A3A3A]"
-            >
-              Wrap ETH
-            </Button>
-          </Link>
+          <WrapETH />
         </div>
 
         <div className='p-4 flex flex-col items-center'>

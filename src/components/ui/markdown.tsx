@@ -3,9 +3,14 @@ import Link from 'next/link'
 import { type ComponentProps } from 'react'
 import ReactMarkdown from 'react-markdown'
 
-type Headings = 'h1' | 'h2' | 'h3' | 'h4' | 'h4' | 'h5' | 'h6'
-const createHeading = (Component: Headings) => (props: ComponentProps<Headings>) =>
-  <Component {...props} className='font-semibold text-gray-900 dark:text-white' />
+type Headings = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6'
+const createHeading = (Component: Headings) => {
+  const HeadingComponent = (props: ComponentProps<Headings>) => (
+    <Component {...props} className='font-semibold text-gray-900 dark:text-white' />
+  )
+  HeadingComponent.displayName = `Heading${Component.toUpperCase()}`
+  return HeadingComponent
+}
 
 export function Markdown({ className, ...props }: ComponentProps<typeof ReactMarkdown>) {
   return (
@@ -38,4 +43,3 @@ export function Markdown({ className, ...props }: ComponentProps<typeof ReactMar
     />
   )
 }
-Markdown.displayName = 'Markdown'

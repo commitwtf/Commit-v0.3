@@ -50,10 +50,11 @@ export const NavItems = () => {
         Rewards
       </Link>
       <Link
-        href='https://commitwtf.notion.site/Commit-wiki-133ff6ac3d18809092f6fdcc85958bc3'
-        target='_blank'
-        rel='noopener noreferrer'
-        className='flex items-center gap-3 px-4 py-2 text-sm font-medium text-gray-700 rounded-lg hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
+        href='/about'
+        className={`flex items-center gap-3 px-4 py-2 text-sm font-medium rounded-lg ${pathname.includes('/about')
+          ? 'bg-[#DCDCDC] text-gray-900'
+          : 'text-gray-700 hover:bg-[#DCDCDC] dark:text-[#E0E0E0] dark:hover:bg-[#DCDCDC] dark:hover:text-gray-900'
+          }`}
       >
         <BookOpen className='w-5 h-5' />
         About

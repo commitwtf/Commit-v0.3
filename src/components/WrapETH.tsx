@@ -92,7 +92,7 @@ export function WrapETH() {
                 disabled={isLoading || insufficientBalance || !amount}
                 isLoading={isLoading}
               >
-                Despoit
+                Deposit
               </Button>
             </DialogFooter>
           </form>

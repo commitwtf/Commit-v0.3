@@ -20,6 +20,7 @@ import { useForm } from 'react-hook-form'
 import { useState } from 'react'
 import { parseEther } from 'viem'
 import { useAccount, useBalance } from 'wagmi'
+import { cn } from '@/utils'
 
 const DepositSchema = z.object({
   amount: z.string(),
@@ -35,6 +36,10 @@ export function WrapETH() {
     defaultValues: { amount: '' },
   })
 
+  const amount = parseEther(form.watch('amount') || '0')
+  const insufficientBalance = amount > (balance.data?.value || 0)
+
+  const isLoading = isPending || form.formState.isSubmitting
   return (
     <Dialog open={isOpen} onOpenChange={setOpen}>
       <Button
@@ -50,7 +55,10 @@ export function WrapETH() {
             onSubmit={form.handleSubmit(async (values) => {
               console.log('deposit', values)
               const value = parseEther(values.amount)
-              return mutateAsync({ value }).then(() => setOpen(false))
+              return mutateAsync({ value }).then(() => {
+                form.reset()
+                setOpen(false)
+              })
             })}
           >
             <DialogHeader>
@@ -71,11 +79,19 @@ export function WrapETH() {
                 </FormItem>
               )}
             />
-            <div className='py-1 text-right text-sm text-gray-600'>
+            <div
+              className={cn('py-1 text-right text-sm text-gray-600', {
+                ['text-red-600']: insufficientBalance,
+              })}
+            >
               Balance: {balance.data?.formatted}
             </div>
             <DialogFooter>
-              <Button type='submit' isLoading={isPending || form.formState.isSubmitting}>
+              <Button
+                type='submit'
+                disabled={isLoading || insufficientBalance || !amount}
+                isLoading={isLoading}
+              >
                 Despoit
               </Button>
             </DialogFooter>

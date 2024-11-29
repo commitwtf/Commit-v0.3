@@ -14,8 +14,7 @@ you're interested in, have fun with others who share similar goals, and win rewa
 For the Phi: Cyber Safari campaign, there are three Commits ready for you to join! To
 participate in any Commit, please ensure you have 0.001 $ETH on the Cyber mainnet for
 gas — visit [Cyber Bridge page](https://cyber.co/bridge) if needed. Additionally, you'll need
-0.0005 $WETH to join each Commit — visit [CyberSwap](https://cyberswap.cc/trade/swap) for ETH
-<> WETH conversion.
+0.0005 $WETH to join each Commit — use 'Wrap ETH' on the sidebar for ETH to WETH conversion.
 
 We hope you have fun! To learn more about the exact steps to join and complete your
 Commit, please check the user guide [here](https://buildoncyber.notion.site/Phi-Cyber-Safari-User-Guide-1470c7ec751f80099008de1fb7f64943).

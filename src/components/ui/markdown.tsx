@@ -38,3 +38,4 @@ export function Markdown({ className, ...props }: ComponentProps<typeof ReactMar
     />
   )
 }
+Markdown.displayName = 'Markdown'

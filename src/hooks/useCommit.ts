@@ -18,6 +18,7 @@ import { useConfig } from '@/hooks/useConfig'
 
 export interface CommitmentDetails {
   id: string
+  createdAt: number
   creator: { address: Address }
   stakeAmount: { formatted: string; value: bigint; token: Address }
   creatorFee: { formatted: string; value: bigint; token: Address }
@@ -76,6 +77,7 @@ const COMMITMENTS_QUERY = gql`
       where: $where
     ) {
       id
+      createdAt
       description
       creator {
         address
@@ -324,11 +326,15 @@ export function useGetCommitmentWinners(commitId: number) {
 
 export function useCommitments(
   filter: {
-    orderBy?: 'id'
+    orderBy?: 'id' | 'participantCount'
     orderDirection?: 'asc' | 'desc'
     where?: {
       creator_in?: Address[]
       id_in?: string[]
+      id_not_in?: string[]
+      id_gt?: string
+      createdAt_gte?: string
+      status?: 'Created' | 'Resolved' | 'Cancelled'
       participants_?: { address_in: Address[] }
     }
   },
@@ -348,14 +354,28 @@ export function useCommitments(
   })
 }
 
-// Fetch active commitments
-export function useGetActiveCommitments() {
+const phiCollectionIds = ['6', '7', '8']
+const hiddenIds = ['11']
+export function useFeaturedCommits() {
   return useCommitments({
-    where: { id_in: ['6', '7', '8'] },
+    where: { id_in: phiCollectionIds },
     orderBy: 'id',
     orderDirection: 'asc',
   })
 }
+
+export function useCommunityCommits() {
+  return useCommitments({
+    where: {
+      id_not_in: phiCollectionIds.concat(hiddenIds),
+      status: 'Created',
+      createdAt_gte: '1732893421000',
+    },
+    orderBy: 'participantCount',
+    orderDirection: 'desc',
+  })
+}
+
 // User's commitments
 export function useUserCommitments(address?: Address) {
   return useCommitments({ where: { creator_in: [address!] } }, { enabled: Boolean(address) })

@@ -171,15 +171,20 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
 function TimeRemaining({ commitId = '' }) {
   const { data: deadlines } = useGetCommitmentDeadlines(commitId)
   if (!deadlines?.length) return null
+
+  function hasPassed(date: number) {
+    return Date.now() > date
+  }
+
   return (
     <div className='grid grid-cols-2 gap-4 text-sm text-gray-600 dark:text-gray-400'>
       <div>
         <span className='text-gray-500 dark:text-gray-400'>Join:</span>{' '}
-        {formatSecondsToDays(deadlines[0])}
+        {hasPassed(deadlines[0]) ? 'waiting to resolve winner' : formatSecondsToDays(deadlines[0])}
       </div>
       <div>
         <span className='text-gray-500 dark:text-gray-400'>Fulfill:</span>{' '}
-        {formatSecondsToDays(deadlines[1])}
+        {hasPassed(deadlines[1]) ? 'waiting to resolve winner' : formatSecondsToDays(deadlines[1])}
       </div>
     </div>
   )

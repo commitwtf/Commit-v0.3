@@ -51,8 +51,8 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
 
   return (
     <main className='flex-1 overflow-y-auto'>
-      <div className='max-w-2xl mx-auto px-4 py-6'>
-        <div className='flex justify-between items-center mb-6'>
+      <div className='max-w-2xl mx-auto px-4 py-6 space-y-8'>
+        <div className='flex justify-between items-center'>
           <h1 className='text-2xl font-semibold text-gray-900 dark:text-white'>Commit Details</h1>
           <div className='flex items-center gap-2'>
             <div className='px-4 py-1.5 bg-[#DCDCDC] dark:bg-[#2A2A2A] rounded-full'>
@@ -65,7 +65,6 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               <ClaimCommitCreatorFee commitId={data?.id} />
               <ClaimCommitRewards commitId={data?.id} />
 
-              <CancelCommit commitId={data?.id} />
               <ClaimCommitCreatorFee commitId={data?.id} />
               <ClaimCommitRewards commitId={data?.id} />
             </EnsureCorrectNetwork>
@@ -163,9 +162,8 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
             }
           })()}
         </div>
+        <ResolveCommit commitId={data?.id} />
       </div>
-
-      <ResolveCommit commitId={data?.id} />
     </main>
   )
 }

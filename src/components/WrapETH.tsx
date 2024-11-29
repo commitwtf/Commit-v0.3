@@ -55,7 +55,10 @@ export function WrapETH() {
             onSubmit={form.handleSubmit(async (values) => {
               console.log('deposit', values)
               const value = parseEther(values.amount)
-              return mutateAsync({ value }).then(() => setOpen(false))
+              return mutateAsync({ value }).then(() => {
+                form.reset()
+                setOpen(false)
+              })
             })}
           >
             <DialogHeader>

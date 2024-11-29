@@ -6,7 +6,6 @@ export const toNow = (date?: string | number, opts = { addSuffix: true }) =>
 export function formatSecondsToDays(seconds = 0) {
   const now = new Date()
   const targetDate = new Date(seconds)
-  if (now > targetDate) return '--'
   const duration = intervalToDuration({ start: now, end: targetDate })
 
   const formattedDuration = formatDuration(duration, {

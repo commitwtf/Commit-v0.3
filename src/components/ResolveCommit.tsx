@@ -1,6 +1,7 @@
 'use client'
 import {
   CommitmentStatus,
+  useGetCommitmentDeadlines,
   useGetCommitmentDetails,
   useIsCommitCreator,
   useResolveCommitment,
@@ -16,12 +17,17 @@ export function ResolveCommit({ commitId = '' }) {
   const [selectedWinners, setWinners] = useState<Record<Address, boolean>>({})
   const { mutateAsync, isPending } = useResolveCommitment()
   const { data, refetch } = useGetCommitmentDetails(commitId)
+  const { data: deadlines } = useGetCommitmentDeadlines(commitId)
 
   const isCreator = useIsCommitCreator(commitId)
   if (data?.status !== CommitmentStatus.Created) return null
 
   // Only visible for Commit creators
   if (!isCreator) return null
+
+  // Only visible after fulfillmentDeadline
+  if (!deadlines?.length) return null
+  if (Date.now() < deadlines[1]) return null
 
   const winners = Object.entries(selectedWinners).filter(([_, isSelected]) => isSelected)
 

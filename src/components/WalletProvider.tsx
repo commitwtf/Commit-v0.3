@@ -15,7 +15,7 @@ import { MAINNET_RELAY_API, TESTNET_RELAY_API } from '@reservoir0x/relay-sdk'
 
 const queryClient = new QueryClient()
 
-const chains = [cyber, mainnet, base, arbitrum, optimism, celo] as const
+const chains = [cyber, mainnet, base, arbitrum, optimism] as const
 
 const config = getDefaultConfig({
   appName: 'Commit',

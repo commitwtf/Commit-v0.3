@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { Button } from '@/src/components/ui/Button'
 import { NavItems } from './NavItems'
-import { WrapETH } from '../WrapETH'
+import RelaySwapWidget from '../SwapWidget'
 
 export function Sidebar() {
   return (
@@ -11,7 +11,7 @@ export function Sidebar() {
       <div className='flex flex-col h-full'>
         <div className='flex-grow p-4 space-y-2'>
           <NavItems />
-          <WrapETH />
+          <RelaySwapWidget />
         </div>
 
         <div className='p-4 flex flex-col items-center'>

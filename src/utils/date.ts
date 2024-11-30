@@ -10,7 +10,7 @@ export function formatSecondsToDays(seconds = 0) {
 
   const formattedDuration = formatDuration(duration, {
     delimiter: ', ',
-    format: ['days', 'hours', 'minutes'],
+    format: ['years', 'months', 'days', 'hours', 'minutes'],
   })
 
   return formattedDuration

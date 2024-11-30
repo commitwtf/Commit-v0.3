@@ -101,6 +101,7 @@ const COMMITMENTS_QUERY = gql`
 // Get commitment details
 export function useGetCommitmentDetails(commitId: string) {
   return useQuery({
+    refetchInterval: 2000,
     queryKey: ['commitments', commitId],
     queryFn: () =>
       client
@@ -341,7 +342,7 @@ export function useCommitments(
   opts: { enabled: boolean } = { enabled: true }
 ) {
   return useQuery({
-    refetchInterval: 3000,
+    refetchInterval: 5000,
     enabled: opts.enabled,
     queryKey: ['commitments', filter],
     queryFn: () =>
@@ -355,7 +356,7 @@ export function useCommitments(
 }
 
 const phiCollectionIds = ['6', '7', '8']
-const hiddenIds = ['11', '12']
+const hiddenIds = ['11']
 export function useFeaturedCommits() {
   return useCommitments({
     where: { id_in: phiCollectionIds },

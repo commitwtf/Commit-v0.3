@@ -356,7 +356,7 @@ export function useCommitments(
 }
 
 const phiCollectionIds = ['6', '7', '8']
-const hiddenIds = ['11']
+const hiddenIds = ['11', '12']
 export function useFeaturedCommits() {
   return useCommitments({
     where: { id_in: phiCollectionIds },

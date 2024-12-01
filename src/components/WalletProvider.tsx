@@ -8,14 +8,12 @@ import { WagmiProvider } from 'wagmi'
 import { http } from 'wagmi'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { useState, useEffect } from 'react'
-import { arbitrum, base, celo, Chain, cyber, hardhat, mainnet, optimism } from 'viem/chains'
 import { RelayKitProvider } from '@reservoir0x/relay-kit-ui'
 import { convertViemChainToRelayChain } from '@reservoir0x/relay-sdk'
-import { MAINNET_RELAY_API, TESTNET_RELAY_API } from '@reservoir0x/relay-sdk'
+import { MAINNET_RELAY_API } from '@reservoir0x/relay-sdk'
+import { chains, defaultNetwork } from '@/hooks/useConfig'
 
 const queryClient = new QueryClient()
-
-const chains = [cyber, mainnet, base, arbitrum, optimism] as const
 
 const config = getDefaultConfig({
   appName: 'Commit',
@@ -69,7 +67,11 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
             baseApiUrl: MAINNET_RELAY_API,
           }}
         >
-          <RainbowKitProvider initialChain={cyber} theme={rainbowKitTheme} modalSize='compact'>
+          <RainbowKitProvider
+            initialChain={defaultNetwork}
+            theme={rainbowKitTheme}
+            modalSize='compact'
+          >
             {mounted && children}
           </RainbowKitProvider>
         </RelayKitProvider>

@@ -12,9 +12,11 @@ import { useState, useEffect } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useWaitForEvent } from './useWaitForEvent'
 import { Address, formatUnits, getAddress } from 'viem'
-import { client } from '@/lib/graphql'
 import { gql } from 'graphql-tag'
 import { useConfig } from '@/hooks/useConfig'
+import { useIndexer } from './useIndexer'
+import { baseSepolia, cyber } from 'viem/chains'
+import { useParams } from 'next/navigation'
 
 export interface CommitmentDetails {
   id: string
@@ -100,12 +102,14 @@ const COMMITMENTS_QUERY = gql`
 
 // Get commitment details
 export function useGetCommitmentDetails(commitId: string) {
+  const { data: client } = useIndexer()
   return useQuery({
     refetchInterval: 2000,
-    queryKey: ['commitments', commitId],
+    enabled: !!client,
+    queryKey: ['commitments', { client, commitId }],
     queryFn: () =>
       client
-        .query<{
+        ?.query<{
           commitments: CommitmentGraphQL[]
         }>(COMMITMENTS_QUERY, {
           where: { id_in: [commitId] },
@@ -341,13 +345,14 @@ export function useCommitments(
   },
   opts: { enabled: boolean } = { enabled: true }
 ) {
+  const { data: client } = useIndexer()
   return useQuery({
     refetchInterval: 5000,
-    enabled: opts.enabled,
-    queryKey: ['commitments', filter],
+    enabled: opts.enabled && !!client,
+    queryKey: ['commitments', { client, filter }],
     queryFn: () =>
       client
-        .query<{
+        ?.query<{
           commitments: CommitmentGraphQL[]
         }>(COMMITMENTS_QUERY, filter)
         .toPromise()
@@ -355,20 +360,34 @@ export function useCommitments(
   })
 }
 
-const phiCollectionIds = ['6', '7', '8']
-const hiddenIds = ['11', '12']
+const collections = {
+  [cyber.id]: {
+    featured: ['6', '7', '8'],
+    hidden: ['11', '12'],
+  },
+  [baseSepolia.id]: {
+    featured: [],
+    hidden: [],
+  },
+}
 export function useFeaturedCommits() {
+  const { chainId } = useParams()
+  const { featured = [] } = collections[Number(chainId) as keyof typeof collections] || {}
   return useCommitments({
-    where: { id_in: phiCollectionIds },
+    where: { id_in: featured },
     orderBy: 'id',
     orderDirection: 'asc',
   })
 }
 
 export function useCommunityCommits() {
+  const { chainId } = useParams()
+  const { featured = [], hidden = [] } =
+    collections[Number(chainId) as keyof typeof collections] || {}
+
   return useCommitments({
     where: {
-      id_not_in: phiCollectionIds.concat(hiddenIds),
+      id_not_in: featured.concat(hidden),
       status: 'Created',
       createdAt_gte: '1732893421000',
     },

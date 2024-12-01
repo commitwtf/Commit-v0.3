@@ -54,6 +54,7 @@ const HomePage = () => {
             </div>
           )}
         </section>
+        {/* 
         <section>
           <div className='flex justify-between items-center mb-6'>
             <h1 className='text-2xl font-semibold text-gray-900 dark:text-white'>
@@ -76,6 +77,7 @@ const HomePage = () => {
             </div>
           )}
         </section>
+        */}
       </div>
     </main>
   )

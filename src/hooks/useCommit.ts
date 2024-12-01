@@ -15,6 +15,8 @@ import { Address, formatUnits, getAddress } from 'viem'
 import { gql } from 'graphql-tag'
 import { useConfig } from '@/hooks/useConfig'
 import { useIndexer } from './useIndexer'
+import { baseSepolia, cyber } from 'viem/chains'
+import { useParams } from 'next/navigation'
 
 export interface CommitmentDetails {
   id: string
@@ -361,7 +363,15 @@ export function useCommitments(
 // TODO: handle this in multi networks
 const phiCollectionIds = ['6', '7', '8']
 const hiddenIds = ['11', '12']
+
+const featuredCollections = {
+  [cyber.id]: ['6', '7', '8'],
+  [baseSepolia.id]: [],
+}
 export function useFeaturedCommits() {
+  const params = useParams()
+
+  console.log('params,', params)
   return useCommitments({
     where: { id_in: phiCollectionIds },
     orderBy: 'id',

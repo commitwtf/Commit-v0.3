@@ -1,10 +1,10 @@
 import { SwapWidget } from '@reservoir0x/relay-kit-ui'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import { config, useConfig } from '@/hooks/useConfig'
+import { config } from '@/hooks/useConfig'
 import { useState } from 'react'
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from './ui/dialog'
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog'
 import { Button } from './ui'
-import { cyber, mainnet } from 'viem/chains'
+import { cyber } from 'viem/chains'
 import { zeroAddress } from 'viem'
 
 export default function RelaySwapWidget() {
@@ -28,7 +28,7 @@ export default function RelaySwapWidget() {
         <SwapWidget
           defaultToToken={{
             chainId: cyber.id,
-            address: config[cyber.id].weth,
+            address: config[cyber.id].weth!,
             decimals: 18,
             name: 'WETH',
             symbol: 'WETH',

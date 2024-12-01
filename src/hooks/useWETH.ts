@@ -39,7 +39,7 @@ export function useWETH() {
   return useMutation({
     mutationFn: async ({ value }: { value: bigint }) =>
       writeContractAsync({
-        address: contracts.weth,
+        address: contracts.weth!,
         abi: wethAbi,
         functionName: 'deposit',
         value,

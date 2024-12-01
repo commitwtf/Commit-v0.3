@@ -3,7 +3,6 @@
 import { CommitCard } from '@/src/components'
 import { useWalletGuard } from '@/hooks/useWalletGuard'
 import { useCommunityCommits, useFeaturedCommits } from '@/hooks/useCommit'
-import { WalletError } from '@/components'
 import { Markdown } from '@/components/ui/markdown'
 import { baseSepolia, cyber } from 'viem/chains'
 import { useParams } from 'next/navigation'
@@ -47,7 +46,9 @@ const HomePage = () => {
             </div>
           </div>
           <div className='bg-blue-50 dark:bg-blue-950/50 rounded-lg p-6 mb-6'>
-            <Markdown className={'prose-sm'}>{campaigns[Number(chainId)]}</Markdown>
+            <Markdown className={'prose-sm'}>
+              {campaigns[Number(chainId) as keyof typeof campaigns]}
+            </Markdown>
           </div>
           <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
             {(featured.isPending ? createLoadingCards(3) : featured.data)?.map((commit) => (

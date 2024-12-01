@@ -36,7 +36,7 @@ export const config: Record<number, NetworkConfig> = {
     ],
   },
   [baseSepolia.id]: {
-    protocol: '0x15964a2eb1ad3fa3262508e6d81b21d7a537c11c',
+    protocol: '0x8c9e46b920fe11de9ab0c6b7113b241fcfee84de',
     tokens: [zeroAddress],
   },
 }

@@ -360,29 +360,34 @@ export function useCommitments(
   })
 }
 
-// TODO: handle this in multi networks
-const phiCollectionIds = ['6', '7', '8']
-const hiddenIds = ['11', '12']
-
-const featuredCollections = {
-  [cyber.id]: ['6', '7', '8'],
-  [baseSepolia.id]: [],
+const collections = {
+  [cyber.id]: {
+    featured: ['6', '7', '8'],
+    hidden: ['11', '12'],
+  },
+  [baseSepolia.id]: {
+    featured: [],
+    hidden: [],
+  },
 }
 export function useFeaturedCommits() {
-  const params = useParams()
-
-  console.log('params,', params)
+  const { chainId } = useParams()
+  const { featured = [] } = collections[Number(chainId) as keyof typeof collections] || {}
   return useCommitments({
-    where: { id_in: phiCollectionIds },
+    where: { id_in: featured },
     orderBy: 'id',
     orderDirection: 'asc',
   })
 }
 
 export function useCommunityCommits() {
+  const { chainId } = useParams()
+  const { featured = [], hidden = [] } =
+    collections[Number(chainId) as keyof typeof collections] || {}
+
   return useCommitments({
     where: {
-      id_not_in: phiCollectionIds.concat(hiddenIds),
+      id_not_in: featured.concat(hidden),
       status: 'Created',
       createdAt_gte: '1732893421000',
     },

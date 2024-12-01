@@ -12,9 +12,9 @@ import { useState, useEffect } from 'react'
 import { useMutation, useQuery } from '@tanstack/react-query'
 import { useWaitForEvent } from './useWaitForEvent'
 import { Address, formatUnits, getAddress } from 'viem'
-import { client } from '@/lib/graphql'
 import { gql } from 'graphql-tag'
 import { useConfig } from '@/hooks/useConfig'
+import { useIndexer } from './useIndexer'
 
 export interface CommitmentDetails {
   id: string
@@ -100,12 +100,14 @@ const COMMITMENTS_QUERY = gql`
 
 // Get commitment details
 export function useGetCommitmentDetails(commitId: string) {
+  const { data: client } = useIndexer()
   return useQuery({
     refetchInterval: 2000,
-    queryKey: ['commitments', commitId],
+    enabled: !!client,
+    queryKey: ['commitments', { client, commitId }],
     queryFn: () =>
       client
-        .query<{
+        ?.query<{
           commitments: CommitmentGraphQL[]
         }>(COMMITMENTS_QUERY, {
           where: { id_in: [commitId] },
@@ -341,13 +343,14 @@ export function useCommitments(
   },
   opts: { enabled: boolean } = { enabled: true }
 ) {
+  const { data: client } = useIndexer()
   return useQuery({
     refetchInterval: 5000,
-    enabled: opts.enabled,
-    queryKey: ['commitments', filter],
+    enabled: opts.enabled && !!client,
+    queryKey: ['commitments', { client, filter }],
     queryFn: () =>
       client
-        .query<{
+        ?.query<{
           commitments: CommitmentGraphQL[]
         }>(COMMITMENTS_QUERY, filter)
         .toPromise()
@@ -355,6 +358,7 @@ export function useCommitments(
   })
 }
 
+// TODO: handle this in multi networks
 const phiCollectionIds = ['6', '7', '8']
 const hiddenIds = ['11', '12']
 export function useFeaturedCommits() {

@@ -1,13 +1,22 @@
 'use client'
 
-import { Address } from 'viem'
-import { cyber, hardhat } from 'viem/chains'
+import { Address, zeroAddress } from 'viem'
+import { arbitrum, base, baseSepolia, cyber, hardhat, mainnet, optimism } from 'viem/chains'
 import { useChainId } from 'wagmi'
 
-export const defaultNetwork = hardhat
+const isDev = process.env.NODE_ENV === 'development'
+export const defaultNetwork = isDev ? baseSepolia : cyber
+export const chains = [
+  cyber,
+  mainnet,
+  base,
+  arbitrum,
+  optimism,
+  ...(isDev ? [baseSepolia] : []),
+] as const
 
 type NetworkConfig = {
-  weth: Address
+  weth?: Address
   protocol: Address
   tokens: Address[]
 }
@@ -25,6 +34,10 @@ export const config: Record<number, NetworkConfig> = {
       '0x4200000000000000000000000000000000000006',
       '0x14778860e937f509e651192a90589de711fb88a9',
     ],
+  },
+  [baseSepolia.id]: {
+    protocol: '0x15964a2eb1ad3fa3262508e6d81b21d7a537c11c',
+    tokens: [zeroAddress],
   },
 }
 

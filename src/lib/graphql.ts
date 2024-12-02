@@ -9,8 +9,6 @@ const urls = {
   [baseSepolia.id]: `${baseUrl}/0.0.271-base-sepolia/gn`,
 }
 export function createClient(chainId: number) {
-  return new Client({
-    url: urls[chainId as keyof typeof urls],
-    exchanges: [cacheExchange, fetchExchange],
-  })
+  const url = urls[chainId as keyof typeof urls]
+  return new Client({ url, exchanges: [cacheExchange, fetchExchange] })
 }

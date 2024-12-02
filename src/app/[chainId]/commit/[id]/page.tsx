@@ -45,7 +45,6 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
       </main>
     )
   }
-  console.log(data)
   if (!data) return notFound()
   if (isError || !data) {
     return (

@@ -1,12 +1,11 @@
 import { createClient } from '@/lib/graphql'
-import { useQuery } from '@tanstack/react-query'
+import { useParams } from 'next/navigation'
 import { useChainId } from 'wagmi'
 
 export function useIndexer() {
-  const chainId = useChainId()
-  return useQuery({
-    queryKey: ['indexer-client', chainId],
-    queryFn: () => createClient(chainId!),
-    enabled: Boolean(chainId),
-  })
+  const params = useParams()
+  const _chainId = useChainId()
+
+  const chainId = Number(params.chainId || _chainId)
+  return chainId ? createClient(chainId) : undefined
 }

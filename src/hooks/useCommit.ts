@@ -102,22 +102,14 @@ const COMMITMENTS_QUERY = gql`
 
 // Get commitment details
 export function useGetCommitmentDetails(commitId: string) {
-  const { data: client } = useIndexer()
-  return useQuery({
-    refetchInterval: 2000,
-    enabled: !!client,
-    queryKey: ['commitments', { client, commitId }],
-    queryFn: () =>
-      client
-        ?.query<{
-          commitments: CommitmentGraphQL[]
-        }>(COMMITMENTS_QUERY, {
-          where: { id_in: [commitId] },
-        })
-        .toPromise()
-        .then((r) => r.data?.commitments.map(mapCommitment))
-        .then((r) => r?.[0] || null),
-  })
+  const { data, ...rest } = useCommitments(
+    { where: { id_in: [commitId] } },
+    { enabled: Boolean(commitId) }
+  )
+  return {
+    ...rest,
+    data: data?.[0] ?? null,
+  }
 }
 
 export function useGetCommitmentDeadlines(commitId: string) {
@@ -345,11 +337,12 @@ export function useCommitments(
   },
   opts: { enabled: boolean } = { enabled: true }
 ) {
-  const { data: client } = useIndexer()
+  const client = useIndexer()
+
   return useQuery({
     refetchInterval: 5000,
     enabled: opts.enabled && !!client,
-    queryKey: ['commitments', { client, filter }],
+    queryKey: ['commitments', { filter }],
     queryFn: () =>
       client
         ?.query<{

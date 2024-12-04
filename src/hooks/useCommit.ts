@@ -56,6 +56,7 @@ type CommitmentGraphQL = {
   stakeAmount: string
   creatorFee: string
   status: string
+  participantCount: number
   participants: {
     address: Address
   }[]
@@ -325,7 +326,7 @@ export function useGetCommitmentWinners(commitId: number) {
 
 export function useCommitments(
   filter: {
-    orderBy?: 'id' | 'participantCount'
+    orderBy?: 'id' | 'participantCount' | 'createdAt'
     orderDirection?: 'asc' | 'desc'
     where?: {
       creator_in?: Address[]
@@ -357,7 +358,8 @@ export function useCommitments(
 
 const collections = {
   [cyber.id]: {
-    featured: ['6', '7', '8'],
+    // TODO: Update 9, 10, 12 with correct Cyber IDs
+    featured: ['6', '7', '8', '9', '10', '12'],
     hidden: ['11', '12'],
   },
   [baseSepolia.id]: {
@@ -368,11 +370,33 @@ const collections = {
 export function useFeaturedCommits() {
   const { chainId } = useParams()
   const { featured = [] } = collections[Number(chainId) as keyof typeof collections] || {}
-  return useCommitments({
+  const { data, ...rest } = useCommitments({
     where: { id_in: featured },
-    orderBy: 'id',
+    orderBy: 'createdAt',
     orderDirection: 'asc',
   })
+
+  // Pair the newly created commits with the first 3 created.
+  // Merge participants and use the newest ID
+  const _data = data?.reduce<typeof data>((acc, commit, index, array) => {
+    if (index < 3) {
+      const pairedCommit = array[index + 3]
+      if (pairedCommit) {
+        acc.push({
+          ...commit,
+          id: pairedCommit.id,
+          participantCount: Number(commit.participantCount) + Number(pairedCommit.participantCount),
+          participants: commit.participants.concat(pairedCommit.participants),
+        })
+      }
+    }
+    return acc
+  }, [])
+
+  return {
+    ...rest,
+    data: _data,
+  }
 }
 
 export function useCommunityCommits() {

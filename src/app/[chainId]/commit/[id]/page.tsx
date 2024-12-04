@@ -22,10 +22,11 @@ import { notFound } from 'next/navigation'
 import { EnsureCorrectNetwork } from '@/components/EnsureCorrectNetwork'
 import { Markdown } from '@/components/ui/markdown'
 
+// TODO: Update with the new commit Cyber IDs
 const descriptions = {
-  '6': rewards[0].description,
-  '7': rewards[1].description,
-  '8': rewards[2].description,
+  '9': rewards[0].description,
+  '10': rewards[1].description,
+  '12': rewards[2].description,
   '13': `This commit is for the true POWER COMMITTERS — the COMMIT OF ALL COMMITS.
 
 It's time to commit and unleash your potential. Become a LEGENDARY COMMITTER by taking the ULTIMATE CHALLENGE — committing to completing 69 commits within a year since Commit's launch (Nov 27, 2024). Don't hesitate, don't second-guess. Commit to something.`,

@@ -10,6 +10,7 @@ import { useParams } from 'next/navigation'
 export function CommitCard({
   id,
   description,
+  participantCount,
   participants,
   stakeAmount,
   isLoading,
@@ -27,7 +28,7 @@ export function CommitCard({
         <div className='flex items-center justify-between mb-3'>
           <div className='flex items-center gap-2 text-gray-600 dark:text-gray-400'>
             <Users className='w-4 h-4' />
-            <span className='text-sm'>{participants?.length} participants</span>
+            <span className='text-sm'>{participantCount} participants</span>
           </div>
           <div className='px-2.5 py-0.5 bg-gray-200 dark:bg-gray-700 rounded-full'>
             <span className='text-sm font-medium text-gray-800 dark:text-gray-200'>

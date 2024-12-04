@@ -24,6 +24,7 @@ export interface CommitmentDetails {
   creator: { address: Address }
   stakeAmount: { formatted: string; value: bigint; token: Address }
   creatorFee: { formatted: string; value: bigint; token: Address }
+  participantCount: number
   participants: { address: Address }[]
   winners: { address: Address }[]
   description: string
@@ -90,6 +91,7 @@ const COMMITMENTS_QUERY = gql`
       creatorFee
       creatorFee
       status
+      participantCount
       participants(first: 1000) {
         address
       }

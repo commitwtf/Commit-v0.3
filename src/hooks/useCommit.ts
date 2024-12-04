@@ -105,13 +105,28 @@ const COMMITMENTS_QUERY = gql`
 
 // Get commitment details
 export function useGetCommitmentDetails(commitId: string) {
+  // Check if CommitID is part of a Cyber ID that needs to be merged
+  const idAt = additionalCyberIDs.indexOf(commitId)
+  const commitIds = idAt > -1 ? [commitId, originalCyberIds[idAt]] : [commitId]
   const { data, ...rest } = useCommitments(
-    { where: { id_in: [commitId] } },
+    { where: { id_in: commitIds } },
     { enabled: Boolean(commitId) }
   )
+
+  const pairedData =
+    idAt > -1 && data?.length === 2
+      ? [
+          {
+            ...data[0],
+            participantCount: Number(data[0].participantCount) + Number(data[1].participantCount),
+            participants: data[0].participants.concat(data[1].participants),
+          },
+        ]
+      : data
+
   return {
     ...rest,
-    data: data?.[0] ?? null,
+    data: pairedData?.[0] ?? null,
   }
 }
 
@@ -356,10 +371,12 @@ export function useCommitments(
   })
 }
 
+// TODO: Update 9, 10, 12 with correct Cyber IDs
+const additionalCyberIDs = ['9', '10', '12']
+const originalCyberIds = ['6', '7', '8']
 const collections = {
   [cyber.id]: {
-    // TODO: Update 9, 10, 12 with correct Cyber IDs
-    featured: ['6', '7', '8', '9', '10', '12'],
+    featured: [...originalCyberIds, ...additionalCyberIDs],
     hidden: ['11', '12'],
   },
   [baseSepolia.id]: {

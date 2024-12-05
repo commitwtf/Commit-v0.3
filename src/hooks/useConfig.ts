@@ -9,9 +9,9 @@ export const defaultNetwork = isDev ? baseSepolia : cyber
 export const chains = [
   cyber,
   mainnet,
-  // base,
-  // arbitrum,
-  // optimism,
+  base,
+  arbitrum,
+  optimism,
   ...(isDev ? [baseSepolia] : []),
 ] as const
 

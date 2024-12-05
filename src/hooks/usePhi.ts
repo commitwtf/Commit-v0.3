@@ -35,6 +35,17 @@ export function usePhiCreds(addresses?: Address[], requiredCredentials: number =
     ) ?? [],
   })
 
+  // For single address (rewards page), return total creds
+  if (addresses?.length === 1) {
+    const totalCreds = data?.filter(Boolean).length ?? 0
+    return {
+      ...rest,
+      isLoading,
+      data: [totalCreds, addresses.length]
+    }
+  }
+
+  // For multiple addresses (completion status), return completed count
   const completedCount = data?.reduce((acc, _, index, array) => {
     if (index % credCount === 0) {
       const participantCreds = array.slice(index, index + credCount)

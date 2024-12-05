@@ -17,25 +17,35 @@ const PHI_CONTRACT_ABI = [
   },
 ] as const
 
-export function usePhiCreds(address?: Address) {
+export function usePhiCreds(addresses?: Address[], requiredCredentials: number = 2) {
   const credCount = 8
-  const { data, ...rest } = useReadContracts({
+  const { data, isLoading, ...rest } = useReadContracts({
     allowFailure: false,
-    query: { enabled: Boolean(address) },
-    contracts: Array.from({ length: credCount }, (_, i) => {
-      const credId = i + 2 // credentials from 2 to 8
-      return {
-        address: PHI_CONTRACT_ADDRESS,
-        abi: PHI_CONTRACT_ABI,
-        functionName: 'isCredMinted',
-        args: [cyber.id, BigInt(credId), address],
-      }
-    }),
+    query: { enabled: Boolean(addresses?.length) },
+    contracts: addresses?.flatMap(address =>
+      Array.from({ length: credCount }, (_, i) => {
+        const credId = i + 2 // credentials from 2 to 8
+        return {
+          address: PHI_CONTRACT_ADDRESS,
+          abi: PHI_CONTRACT_ABI,
+          functionName: 'isCredMinted',
+          args: [cyber.id, BigInt(credId), address],
+        }
+      })
+    ) ?? [],
   })
+
+  const completedCount = data?.reduce((acc, _, index, array) => {
+    if (index % credCount === 0) {
+      const participantCreds = array.slice(index, index + credCount)
+      if (participantCreds.filter(Boolean).length >= requiredCredentials) acc++
+    }
+    return acc
+  }, 0) ?? 0
 
   return {
     ...rest,
-    // Returns [credMints, credCount] - eg. [3, 7]
-    data: [(data ?? []).filter((d) => Boolean(d)).length, credCount],
+    isLoading,
+    data: [completedCount, addresses?.length ?? 0]
   }
 }

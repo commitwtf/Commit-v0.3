@@ -9,7 +9,7 @@ import { useAccount } from 'wagmi'
 
 const RewardsPage = () => {
   const { address } = useAccount()
-  const phi = usePhiCreds(address)
+  const phi = usePhiCreds(address ? [address] : undefined)
 
   console.log(phi.data, phi.error, phi.failureReason)
   return (
@@ -78,10 +78,10 @@ function RewardCard({ creds, ...reward }: Reward & { creds: number[] }) {
 
       <span
         className={`absolute top-4 right-4 text-xs font-medium px-2 py-1 rounded-full ${status === 'Won'
-            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-            : status === 'In Progress'
-              ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
-              : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
+          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+          : status === 'In Progress'
+            ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
+            : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
           }`}
       >
         {status}
@@ -100,8 +100,8 @@ function RewardCard({ creds, ...reward }: Reward & { creds: number[] }) {
         <Progress
           value={progress}
           className={`h-2 ${status === 'Won'
-              ? 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-black dark:[&>div]:bg-white'
-              : 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-gray-300 dark:[&>div]:bg-gray-600'
+            ? 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-black dark:[&>div]:bg-white'
+            : 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-gray-300 dark:[&>div]:bg-gray-600'
             }`}
         />
       </div>

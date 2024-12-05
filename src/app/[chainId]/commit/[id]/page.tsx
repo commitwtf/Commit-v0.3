@@ -21,6 +21,7 @@ import { notFound } from 'next/navigation'
 
 import { EnsureCorrectNetwork } from '@/components/EnsureCorrectNetwork'
 import { Markdown } from '@/components/ui/markdown'
+import { CompletionStatus } from '@/components/CompletionStatus'
 
 const descriptions = {
   '6': rewards[0].description,
@@ -101,7 +102,18 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               <Users className='h-5 w-5 text-gray-500 dark:text-gray-400' />
               <div>
                 <div className='text-sm text-gray-500 dark:text-gray-400'>Participants</div>
-                <div className='text-gray-900 dark:text-white'>{data.participants?.length}</div>
+                <div className='text-gray-900 dark:text-white'>{data.participantCount}
+                  <CompletionStatus
+                    participants={data.participants?.map(p => getAddress(p.address)) ?? []}
+                    requiredCredentials={
+                      Number(id) === 6 ? 2 :  // Basic level
+                        Number(id) === 7 ? 4 :  // Medium level
+                          Number(id) === 8 ? 8 :  // Ultimate level
+                            2 // default to 2
+                    }
+                    totalParticipants={data.participantCount ?? 0}
+                  />
+                </div>
               </div>
             </div>
 

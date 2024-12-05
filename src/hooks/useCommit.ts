@@ -56,6 +56,7 @@ type CommitmentGraphQL = {
   stakeAmount: string
   creatorFee: string
   status: string
+  participantCount: number
   participants: {
     address: Address
   }[]
@@ -88,7 +89,6 @@ const COMMITMENTS_QUERY = gql`
       }
       tokenAddress
       stakeAmount
-      creatorFee
       creatorFee
       status
       participantCount

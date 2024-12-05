@@ -20,7 +20,7 @@ export const rewards: Reward[] = [
   {
     name: 'Ultimate Level Commit',
     description: 'Collect all 8 Creds from the Phi: Cyber Safari campaign',
-    tokens: 8310,
+    tokens: 6925,
     requirement: 8,
   },
 ]

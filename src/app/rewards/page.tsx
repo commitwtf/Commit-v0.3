@@ -43,7 +43,7 @@ const RewardsPage = () => {
                 .
               </p>
               <p>
-                After Dec 7, new users will still be able to participate in all three Commits for unclaimed rewards until Dec 20, 2024.
+              Staring Dec 8th, new users will still be able to participate in all three Commits for unclaimed rewards until Dec 15, 2024.
               </p>
               <p className='mt-1 font-medium'>
                 One lucky player who completes the Ultimate-level Commit will take home $5K worth of

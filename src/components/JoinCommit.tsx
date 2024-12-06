@@ -2,7 +2,12 @@
 import { Button } from '@/components'
 import { TokenAmount } from '@/components/TokenAmount'
 import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
-import { useCommitmentToken, useJoinCommitment, useProtocolJoinFee } from '@/hooks/useCommit'
+import {
+  useCommitmentToken,
+  useGetCommitmentDeadlines,
+  useJoinCommitment,
+  useProtocolJoinFee,
+} from '@/hooks/useCommit'
 import { useAllowance, useApprove } from '@/hooks/useToken'
 import { useAccount } from 'wagmi'
 import { Address, formatEther, getAddress } from 'viem'
@@ -12,6 +17,9 @@ import { ExternalLink } from 'lucide-react'
 import { CheckBalance } from '@/components/CheckBalance'
 import { useUpdateQueries } from '@/hooks/useUpdateQueries'
 
+function hasPassed(date: number) {
+  return Date.now() > date
+}
 export function JoinCommitmentButton({
   commitId,
   participants,
@@ -29,10 +37,13 @@ export function JoinCommitmentButton({
   const { mutateAsync, isPending } = useJoinCommitment()
   const updateQueries = useUpdateQueries()
   const { data: protocolFee } = useProtocolJoinFee()
+  const { data: deadlines } = useGetCommitmentDeadlines(commitId)
 
   const allowance = useAllowance(token!, address!, COMMIT_CONTRACT_ADDRESS)
   const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)
   const transferAmount = stakeAmount?.value + creatorFee?.value
+
+  if (deadlines?.[0] && hasPassed(deadlines?.[0])) return <div>Join deadline has passed</div>
 
   if (address && participants?.includes(getAddress(address)))
     return (

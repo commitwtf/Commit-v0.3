@@ -5,7 +5,6 @@ import { Users, Clock, ArrowRight } from 'lucide-react'
 import Link from 'next/link'
 import { TokenAmount } from './TokenAmount'
 import { cn } from '@/utils'
-import { useParams } from 'next/navigation'
 
 export function CommitCard({
   id,
@@ -15,12 +14,8 @@ export function CommitCard({
   stakeAmount,
   isLoading,
 }: Partial<CommitmentDetails> & { isLoading?: boolean }) {
-  const { chainId } = useParams()
   return (
-    <Link
-      href={`${chainId}/commit/${id}`}
-      className={cn('block', { ['animate-pulse']: isLoading })}
-    >
+    <Link href={`/commit/${id}`} className={cn('block', { ['animate-pulse']: isLoading })}>
       <div className='bg-[#DCDCDC] dark:bg-[#2A2A2A] rounded-xl p-4 hover:shadow-md transition-all duration-200'>
         <h3 className='text-lg font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2'>
           {description}

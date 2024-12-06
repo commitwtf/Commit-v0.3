@@ -52,7 +52,11 @@ function TimeRemaining({ commitId }: { commitId: string }) {
     <div className='flex items-center gap-2 text-sm'>
       <Clock className='w-4 h-4' />
       <span>
-        {hasPassed(deadlines[0]) ? 'waiting to resolve winner' : formatSecondsToDays(deadlines[0])}
+        {hasPassed(deadlines[0])
+          ? !hasPassed(deadlines[1])
+            ? 'Rewards can be claimed'
+            : `Fulfill before ${formatSecondsToDays(deadlines[1])}`
+          : `Join before ${formatSecondsToDays(deadlines[0])}`}
       </span>
     </div>
   )

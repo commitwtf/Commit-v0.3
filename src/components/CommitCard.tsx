@@ -43,10 +43,17 @@ export function CommitCard({
 function TimeRemaining({ commitId }: { commitId: string }) {
   const { data: deadlines } = useGetCommitmentDeadlines(String(commitId))
   if (!deadlines?.length) return null
+
+  function hasPassed(date: number) {
+    return Date.now() > date
+  }
+
   return (
     <div className='flex items-center gap-2 text-sm'>
       <Clock className='w-4 h-4' />
-      <span>{formatSecondsToDays(deadlines[0])} left</span>
+      <span>
+        {hasPassed(deadlines[0]) ? 'waiting to resolve winner' : formatSecondsToDays(deadlines[0])}
+      </span>
     </div>
   )
 }

@@ -14,9 +14,8 @@ import { useWaitForEvent } from './useWaitForEvent'
 import { Address, formatUnits, getAddress } from 'viem'
 import { gql } from 'graphql-tag'
 import { useConfig } from '@/hooks/useConfig'
-import { useIndexer } from './useIndexer'
 import { baseSepolia, cyber } from 'viem/chains'
-import { useParams } from 'next/navigation'
+import { client } from '@/lib/graphql'
 
 export interface CommitmentDetails {
   id: string
@@ -339,8 +338,6 @@ export function useCommitments(
   },
   opts: { enabled: boolean } = { enabled: true }
 ) {
-  const client = useIndexer()
-
   return useQuery({
     refetchInterval: 5000,
     enabled: opts.enabled && !!client,
@@ -366,8 +363,7 @@ const collections = {
   },
 }
 export function useFeaturedCommits() {
-  const { chainId } = useParams()
-  const { featured = [] } = collections[Number(chainId) as keyof typeof collections] || {}
+  const { featured = [] } = collections[cyber.id]
   return useCommitments({
     where: { id_in: featured },
     orderBy: 'id',
@@ -376,9 +372,7 @@ export function useFeaturedCommits() {
 }
 
 export function useCommunityCommits() {
-  const { chainId } = useParams()
-  const { featured = [], hidden = [] } =
-    collections[Number(chainId) as keyof typeof collections] || {}
+  const { featured = [], hidden = [] } = collections[cyber.id]
 
   return useCommitments({
     where: {

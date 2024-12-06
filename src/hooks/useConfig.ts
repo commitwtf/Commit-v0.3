@@ -4,16 +4,8 @@ import { Address, zeroAddress } from 'viem'
 import { arbitrum, base, baseSepolia, cyber, hardhat, mainnet, optimism } from 'viem/chains'
 import { useChainId } from 'wagmi'
 
-const isDev = process.env.NODE_ENV === 'development'
-export const defaultNetwork = isDev ? baseSepolia : cyber
-export const chains = [
-  cyber,
-  mainnet,
-  base,
-  arbitrum,
-  optimism,
-  ...(isDev ? [baseSepolia] : []),
-] as const
+export const defaultNetwork = cyber
+export const chains = [cyber, mainnet, base, arbitrum, optimism] as const
 
 type NetworkConfig = {
   weth?: Address
@@ -42,7 +34,5 @@ export const config: Record<number, NetworkConfig> = {
 }
 
 export function useConfig() {
-  const chainId = useChainId()
-
-  return config[chainId] ?? {}
+  return config[cyber.id]
 }

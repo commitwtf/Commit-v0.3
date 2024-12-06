@@ -5,7 +5,7 @@ import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import { useCommitmentToken, useJoinCommitment, useProtocolJoinFee } from '@/hooks/useCommit'
 import { useAllowance, useApprove } from '@/hooks/useToken'
 import { useAccount } from 'wagmi'
-import { Address, formatEther } from 'viem'
+import { Address, formatEther, getAddress } from 'viem'
 import Link from 'next/link'
 import { ExternalLink } from 'lucide-react'
 
@@ -34,18 +34,21 @@ export function JoinCommitmentButton({
   const approve = useApprove(token!, COMMIT_CONTRACT_ADDRESS)
   const transferAmount = stakeAmount?.value + creatorFee?.value
 
-  if (participants?.includes(address!))
-    return <div className='flex justify-center'>Already joined — complete your commit on{' '}
-      <Link
-        href='https://phi.box'
-        target='_blank'
-        rel='noopener noreferrer'
-        className='ml-1 font-medium underline hover:text-green-700 dark:hover:text-green-300 inline-flex items-center'
-      >
-        Phi
-        <ExternalLink className='w-3 h-3 ml-1' />
-      </Link>
-    </div>
+  if (address && participants?.includes(getAddress(address)))
+    return (
+      <div className='flex justify-center'>
+        Already joined — complete your commit on{' '}
+        <Link
+          href='https://phi.box'
+          target='_blank'
+          rel='noopener noreferrer'
+          className='ml-1 font-medium underline hover:text-green-700 dark:hover:text-green-300 inline-flex items-center'
+        >
+          Phi
+          <ExternalLink className='w-3 h-3 ml-1' />
+        </Link>
+      </div>
+    )
 
   if ((allowance.data ?? 0) < stakeAmount?.value)
     return (

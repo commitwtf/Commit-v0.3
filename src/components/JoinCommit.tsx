@@ -45,7 +45,6 @@ export function JoinCommitmentButton({
 
   if (deadlines?.[0] && hasPassed(deadlines?.[0])) return <div>Join deadline has passed</div>
 
-  console.log(deadlines, deadlines?.[0] && new Date(deadlines?.[0]))
   if (participants?.includes(address!))
     return (
       <div className='flex justify-center'>

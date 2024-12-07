@@ -58,8 +58,8 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
             appName: 'Commit::Relay',
             appFees: [
               {
-                recipient: '0x0000000000000000000000000000000000000000',
-                fee: '100', // 1%
+                recipient: '0x7c145a1B6527DeD57D741331e15f01f5818E7F8c',
+                fee: '25', // 0.25%
               },
             ],
             duneApiKey: process.env.NEXT_PUBLIC_DUNE_API_KEY!,

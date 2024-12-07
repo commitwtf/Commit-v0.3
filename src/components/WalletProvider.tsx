@@ -58,7 +58,7 @@ export const WalletProvider = ({ children }: { children: React.ReactNode }) => {
             appName: 'Commit::Relay',
             appFees: [
               {
-                recipient: '0x0000000000000000000000000000000000000000',
+                recipient: '0x7c145a1B6527DeD57D741331e15f01f5818E7F8c',
                 fee: '100', // 1%
               },
             ],

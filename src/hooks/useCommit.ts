@@ -364,9 +364,9 @@ const collections = {
   },
 }
 export function useFeaturedCommits() {
-  const { featured = [] } = collections[cyber.id]
+  const { wave2 = [] } = collections[cyber.id]
   return useCommitments({
-    where: { id_in: featured },
+    where: { id_in: wave2 },
     orderBy: 'id',
     orderDirection: 'asc',
   })

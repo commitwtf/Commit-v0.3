@@ -355,6 +355,7 @@ export function useCommitments(
 const collections = {
   [cyber.id]: {
     featured: ['6', '7', '8'],
+    wave2: ['14', '15', '16'],
     hidden: ['11', '12'],
   },
   [baseSepolia.id]: {
@@ -394,6 +395,27 @@ export function useJoinedCommitments(address?: Address) {
     { where: { participants_: { address_in: [address!] } } },
     { enabled: Boolean(address) }
   )
+}
+
+export function useHasJoinedPrevious(commitId: string) {
+  const { address } = useAccount()
+  const commitIndex = collections[cyber.id].wave2.indexOf(commitId)
+  const joinedCommit = collections[cyber.id].featured[commitIndex]
+
+  const { data, ...rest } = useCommitments(
+    {
+      where: {
+        id_in: [joinedCommit],
+        participants_: { address_in: [address!] },
+      },
+    },
+    { enabled: Boolean(address) }
+  )
+
+  return {
+    ...rest,
+    data: Boolean(data?.length),
+  }
 }
 
 function mapCommitment(commitment: CommitmentGraphQL) {

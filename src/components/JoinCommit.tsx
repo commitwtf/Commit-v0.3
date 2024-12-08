@@ -5,6 +5,7 @@ import { COMMIT_CONTRACT_ADDRESS } from '@/config/contract'
 import {
   useCommitmentToken,
   useGetCommitmentDeadlines,
+  useHasJoinedPrevious,
   useJoinCommitment,
   useProtocolJoinFee,
 } from '@/hooks/useCommit'
@@ -20,6 +21,7 @@ import { useUpdateQueries } from '@/hooks/useUpdateQueries'
 function hasPassed(date: number) {
   return Date.now() > date
 }
+
 export function JoinCommitmentButton({
   commitId,
   participants,
@@ -35,6 +37,8 @@ export function JoinCommitmentButton({
 
   const { data: token } = useCommitmentToken(commitId)
   const { mutateAsync, isPending } = useJoinCommitment()
+  const { data: hasJoinedPrevious } = useHasJoinedPrevious(commitId)
+
   const updateQueries = useUpdateQueries()
   const { data: protocolFee } = useProtocolJoinFee()
   const { data: deadlines } = useGetCommitmentDeadlines(commitId)
@@ -44,8 +48,7 @@ export function JoinCommitmentButton({
   const transferAmount = stakeAmount?.value + creatorFee?.value
 
   if (deadlines?.[0] && hasPassed(deadlines?.[0])) return <div>Join deadline has passed</div>
-
-  if (address && participants?.includes(getAddress(address)))
+  if (address && (participants?.includes(getAddress(address)) || hasJoinedPrevious))
     return (
       <div className='flex justify-center'>
         Already joined — complete your commit on{' '}

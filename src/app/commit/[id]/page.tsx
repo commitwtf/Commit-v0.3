@@ -27,6 +27,9 @@ const descriptions = {
   '6': rewards[0].description,
   '7': rewards[1].description,
   '8': rewards[2].description,
+  '14': rewards[0].description,
+  '15': rewards[1].description,
+  '16': rewards[2].description,
   '13': `This commit is for the true POWER COMMITTERS — the COMMIT OF ALL COMMITS.
 
 It's time to commit and unleash your potential. Become a LEGENDARY COMMITTER by taking the ULTIMATE CHALLENGE — committing to completing 69 commits within a year since Commit's launch (Nov 27, 2024). Don't hesitate, don't second-guess. Commit to something.`,
@@ -102,14 +105,18 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               <Users className='h-5 w-5 text-gray-500 dark:text-gray-400' />
               <div>
                 <div className='text-sm text-gray-500 dark:text-gray-400'>Participants</div>
-                <div className='text-gray-900 dark:text-white'>{data.participantCount}
+                <div className='text-gray-900 dark:text-white'>
+                  {data.participantCount}
                   <CompletionStatus
-                    participants={data.participants?.map(p => getAddress(p.address)) ?? []}
+                    participants={data.participants?.map((p) => getAddress(p.address)) ?? []}
                     requiredCredentials={
-                      Number(id) === 6 ? 2 :  // Basic level
-                        Number(id) === 7 ? 4 :  // Medium level
-                          Number(id) === 8 ? 8 :  // Ultimate level
-                            2 // default to 2
+                      Number(id) === 6
+                        ? 2 // Basic level
+                        : Number(id) === 7
+                        ? 4 // Medium level
+                        : Number(id) === 8
+                        ? 8 // Ultimate level
+                        : 2 // default to 2
                     }
                     totalParticipants={data.participantCount ?? 0}
                   />

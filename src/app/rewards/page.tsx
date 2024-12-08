@@ -46,8 +46,7 @@ const RewardsPage = () => {
               Staring Dec 8th, new users will still be able to participate in all three Commits for unclaimed rewards until Dec 15, 2024.
               </p>
               <p className='mt-1 font-medium'>
-                One lucky player who completes the Ultimate-level Commit will take home $5K worth of
-                CYBER. Will you be the lucky one, anon?
+                One lucky player who completes the Ultimate-level Commit will take home 1,385 $CYBER. Will you be the lucky one, anon?
               </p>
             </div>
           </div>
@@ -112,11 +111,12 @@ function RewardCard({ creds, ...reward }: Reward & { creds: number[] }) {
         className='w-full bg-[#CECECE] text-gray-900 hover:bg-[#BEBEBE]'
         variant={status === 'Won' ? 'default' : 'outline'}
         disabled={status !== 'Won'}
+        onClick={() => status === 'Won' && window.open('https://app.galxe.com/quest/Cyber/GCFbktoYQ1', '_blank', 'noopener noreferrer')}
       >
         {status === 'Won' ? (
           <>
             <Check className='w-4 h-4 mr-2' />
-            Claim Rewards on Dec 08, 2024
+            Claim Rewards on Galxe
           </>
         ) : (
           <>

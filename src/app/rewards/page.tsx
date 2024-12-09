@@ -61,7 +61,7 @@ const RewardsPage = () => {
 
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {rewards.map((reward, index) => (
-            <RewardCard key={index} {...reward} creds={phi.data} />
+            <RewardCard key={index} {...reward} creds={creds} />
           ))}
         </div>
       </div>

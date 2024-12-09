@@ -73,7 +73,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
               </span>
             </div>
             <EnsureCorrectNetwork>
-              {data?.participants.length < 2 && <CancelCommit commitId={data?.id} />}
+              {data?.participantCount < 2 && <CancelCommit commitId={data?.id} />}
               <ClaimCommitCreatorFee commitId={data?.id} />
               <ClaimCommitRewards commitId={data?.id} />
             </EnsureCorrectNetwork>
@@ -108,7 +108,7 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
                 <div className='text-gray-900 dark:text-white'>
                   {data.participantCount}
                   <CompletionStatus
-                    participants={data.participants?.map((p) => getAddress(p.address)) ?? []}
+                    commitId={data.id}
                     requiredCredentials={
                       Number(id) === 6
                         ? 2 // Basic level
@@ -170,7 +170,6 @@ export default function CommitmentPage({ params }: { params: Promise<{ id: strin
                   <EnsureCorrectNetwork>
                     <JoinCommitmentButton
                       commitId={id}
-                      participants={data.participants?.map((p) => getAddress(p.address))}
                       stakeAmount={data.stakeAmount}
                       creatorFee={data.creatorFee}
                     />

@@ -21,18 +21,19 @@ export function usePhiCreds(addresses?: Address[], requiredCredentials: number =
   const credCount = 8
   const { data, isLoading, ...rest } = useReadContracts({
     allowFailure: false,
-    query: { enabled: Boolean(addresses?.length) },
-    contracts: addresses?.flatMap(address =>
-      Array.from({ length: credCount }, (_, i) => {
-        const credId = i + 2 // credentials from 2 to 8
-        return {
-          address: PHI_CONTRACT_ADDRESS,
-          abi: PHI_CONTRACT_ABI,
-          functionName: 'isCredMinted',
-          args: [cyber.id, BigInt(credId), address],
-        }
-      })
-    ) ?? [],
+    query: { enabled: addresses && Boolean(addresses?.length) },
+    contracts:
+      addresses?.flatMap((address) =>
+        Array.from({ length: credCount }, (_, i) => {
+          const credId = i + 2 // credentials from 2 to 8
+          return {
+            address: PHI_CONTRACT_ADDRESS,
+            abi: PHI_CONTRACT_ABI,
+            functionName: 'isCredMinted',
+            args: [cyber.id, BigInt(credId), address],
+          }
+        })
+      ) ?? [],
   })
 
   // For single address (rewards page), return total creds
@@ -41,22 +42,23 @@ export function usePhiCreds(addresses?: Address[], requiredCredentials: number =
     return {
       ...rest,
       isLoading,
-      data: [totalCreds, addresses.length]
+      data: [totalCreds, addresses.length],
     }
   }
 
   // For multiple addresses (completion status), return completed count
-  const completedCount = data?.reduce((acc, _, index, array) => {
-    if (index % credCount === 0) {
-      const participantCreds = array.slice(index, index + credCount)
-      if (participantCreds.filter(Boolean).length >= requiredCredentials) acc++
-    }
-    return acc
-  }, 0) ?? 0
+  const completedCount =
+    data?.reduce((acc, _, index, array) => {
+      if (index % credCount === 0) {
+        const participantCreds = array.slice(index, index + credCount)
+        if (participantCreds.filter(Boolean).length >= requiredCredentials) acc++
+      }
+      return acc
+    }, 0) ?? 0
 
   return {
     ...rest,
     isLoading,
-    data: [completedCount, addresses?.length ?? 0]
+    data: [completedCount, addresses?.length ?? 0],
   }
 }

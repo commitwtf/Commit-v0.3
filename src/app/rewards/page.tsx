@@ -12,6 +12,8 @@ const RewardsPage = () => {
   const phi = usePhiCreds(address ? [address] : undefined)
 
   console.log(phi.data, phi.error, phi.failureReason)
+
+  const creds = (phi.data ?? []) as number[]
   return (
     <main className='flex-1 overflow-y-auto'>
       <div className='max-w-7xl mx-auto p-6'>
@@ -20,7 +22,8 @@ const RewardsPage = () => {
           <div className='px-4 py-1.5 bg-[#DCDCDC] dark:bg-[#2A2A2A] rounded-full'>
             <span className='text-sm font-medium text-gray-900 dark:text-white'>
               Total Rewards:{' '}
-              {/*rewards.reduce((acc, reward) => acc + reward.tokens, 0).toLocaleString() */} 13,850 $CYBER
+              {/*rewards.reduce((acc, reward) => acc + reward.tokens, 0).toLocaleString() */} 13,850
+              $CYBER
             </span>
           </div>
         </div>
@@ -30,7 +33,9 @@ const RewardsPage = () => {
             <AlertCircle className='w-4 h-4' />
             <div>
               <p className='mb-1'>
-                For all three Commits you joined and completed during the Phi: Cyber Safari, the $CYBER rewards will be available for you to claim on Galxe ~24 hours after the campaign ends on Dec 7, 2024. For a more detailed breakdown of the rewards, please{' '}
+                For all three Commits you joined and completed during the Phi: Cyber Safari, the
+                $CYBER rewards will be available for you to claim on Galxe ~24 hours after the
+                campaign ends on Dec 7, 2024. For a more detailed breakdown of the rewards, please{' '}
                 <Link
                   href='https://www.notion.so/buildoncyber/Commit-Rewards-Breakdown-1360c7ec751f80328b05c0379b8695ac'
                   target='_blank'
@@ -43,10 +48,12 @@ const RewardsPage = () => {
                 .
               </p>
               <p>
-              Staring Dec 8th, new users will still be able to participate in all three Commits for unclaimed rewards until Dec 15, 2024.
+                Staring Dec 8th, new users will still be able to participate in all three Commits
+                for unclaimed rewards until Dec 15, 2024.
               </p>
               <p className='mt-1 font-medium'>
-                One lucky player who completes the Ultimate-level Commit will take home 1,385 $CYBER. Will you be the lucky one, anon?
+                One lucky player who completes the Ultimate-level Commit will take home 1,385
+                $CYBER. Will you be the lucky one, anon?
               </p>
             </div>
           </div>
@@ -54,7 +61,7 @@ const RewardsPage = () => {
 
         <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'>
           {rewards.map((reward, index) => (
-            <RewardCard key={index} {...reward} creds={phi.data} />
+            <RewardCard key={index} {...reward} creds={creds} />
           ))}
         </div>
       </div>
@@ -78,12 +85,13 @@ function RewardCard({ creds, ...reward }: Reward & { creds: number[] }) {
       <p className='text-gray-600 dark:text-gray-400 text-sm mb-4'>{reward.description}</p>
 
       <span
-        className={`absolute top-4 right-4 text-xs font-medium px-2 py-1 rounded-full ${status === 'Won'
-          ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
-          : status === 'In Progress'
+        className={`absolute top-4 right-4 text-xs font-medium px-2 py-1 rounded-full ${
+          status === 'Won'
+            ? 'bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-400'
+            : status === 'In Progress'
             ? 'bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-400'
             : 'bg-gray-100 text-gray-800 dark:bg-gray-800 dark:text-gray-400'
-          }`}
+        }`}
       >
         {status}
       </span>
@@ -100,10 +108,11 @@ function RewardCard({ creds, ...reward }: Reward & { creds: number[] }) {
         </div>
         <Progress
           value={progress}
-          className={`h-2 ${status === 'Won'
-            ? 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-black dark:[&>div]:bg-white'
-            : 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-gray-300 dark:[&>div]:bg-gray-600'
-            }`}
+          className={`h-2 ${
+            status === 'Won'
+              ? 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-black dark:[&>div]:bg-white'
+              : 'bg-gray-100 dark:bg-gray-700 [&>div]:bg-gray-300 dark:[&>div]:bg-gray-600'
+          }`}
         />
       </div>
 
@@ -111,7 +120,14 @@ function RewardCard({ creds, ...reward }: Reward & { creds: number[] }) {
         className='w-full bg-[#CECECE] text-gray-900 hover:bg-[#BEBEBE]'
         variant={status === 'Won' ? 'default' : 'outline'}
         disabled={status !== 'Won'}
-        onClick={() => status === 'Won' && window.open('https://app.galxe.com/quest/Cyber/GCFbktoYQ1', '_blank', 'noopener noreferrer')}
+        onClick={() =>
+          status === 'Won' &&
+          window.open(
+            'https://app.galxe.com/quest/Cyber/GCFbktoYQ1',
+            '_blank',
+            'noopener noreferrer'
+          )
+        }
       >
         {status === 'Won' ? (
           <>

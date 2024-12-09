@@ -10,7 +10,6 @@ export function CommitCard({
   id,
   description,
   participantCount,
-  participants,
   stakeAmount,
   isLoading,
 }: Partial<CommitmentDetails> & { isLoading?: boolean }) {

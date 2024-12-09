@@ -13,12 +13,12 @@ export function CompletionStatus({
   totalParticipants: number
 }) {
   const { data: participants } = useParticipants(commitId)
-  const {
-    data: [completed],
-    isLoading,
-  } = usePhiCreds(participants as Address[] | undefined, requiredCredentials)
-
-  if (isLoading) {
+  const { data, isPending } = usePhiCreds(
+    participants as Address[] | undefined,
+    requiredCredentials
+  )
+  const completed = data?.[0] ?? '?'
+  if (isPending) {
     return (
       <div className='flex items-center gap-2'>
         <div>

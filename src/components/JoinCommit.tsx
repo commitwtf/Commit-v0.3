@@ -7,6 +7,7 @@ import {
   useGetCommitmentDeadlines,
   useHasJoinedPrevious,
   useJoinCommitment,
+  useParticipants,
   useProtocolJoinFee,
 } from '@/hooks/useCommit'
 import { useAllowance, useApprove } from '@/hooks/useToken'
@@ -24,17 +25,15 @@ function hasPassed(date: number) {
 
 export function JoinCommitmentButton({
   commitId,
-  participants,
   stakeAmount,
   creatorFee,
 }: {
   commitId: string
-  participants?: Address[]
   stakeAmount: { value: bigint; formatted: string; token: Address }
   creatorFee: { value: bigint; formatted: string; token: Address }
 }) {
   const { address } = useAccount()
-
+  const { data: participants } = useParticipants(commitId)
   const { data: token } = useCommitmentToken(commitId)
   const { mutateAsync, isPending } = useJoinCommitment()
   const { data: hasJoinedPrevious } = useHasJoinedPrevious(commitId)

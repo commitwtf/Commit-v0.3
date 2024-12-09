@@ -9,7 +9,7 @@ import {
 } from 'wagmi'
 import { COMMIT_ABI } from '@/config/contract'
 import { useState, useEffect } from 'react'
-import { useMutation, useQuery } from '@tanstack/react-query'
+import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
 import { useWaitForEvent } from './useWaitForEvent'
 import { Address, formatUnits, getAddress } from 'viem'
 import { gql } from 'graphql-tag'
@@ -24,7 +24,6 @@ export interface CommitmentDetails {
   stakeAmount: { formatted: string; value: bigint; token: Address }
   creatorFee: { formatted: string; value: bigint; token: Address }
   participantCount: number
-  participants: { address: Address }[]
   winners: { address: Address }[]
   description: string
   status: CommitmentStatus
@@ -44,7 +43,9 @@ interface CreateCommitmentParams {
   joinDeadline: number
   fulfillmentDeadline: number
 }
-
+type Participant = {
+  address: Address
+}
 type CommitmentGraphQL = {
   id: string
   creator: {
@@ -56,12 +57,8 @@ type CommitmentGraphQL = {
   creatorFee: string
   status: string
   participantCount: number
-  participants: {
-    address: Address
-  }[]
-  winners: {
-    address: Address
-  }[]
+  participants: Participant[]
+  winners: Participant[]
   description: string
 }
 const COMMITMENTS_QUERY = gql`
@@ -91,10 +88,17 @@ const COMMITMENTS_QUERY = gql`
       creatorFee
       status
       participantCount
-      participants(first: 1000) {
+      winners {
         address
       }
-      winners {
+    }
+  }
+`
+
+const PARTICIPANTS_QUERY = gql`
+  query Participants($first: Int, $skip: Int, $where: Commitment_filter) {
+    commitments(first: 1, where: $where) {
+      participants(first: $first, skip: $skip, where: $p_where) {
         address
       }
     }
@@ -415,6 +419,42 @@ export function useHasJoinedPrevious(commitId: string) {
   return {
     ...rest,
     data: Boolean(data?.length),
+  }
+}
+
+export function useParticipants(commitId: string) {
+  const PAGE_SIZE = 1000
+  const { data, hasNextPage, isFetchingNextPage, fetchNextPage, ...rest } = useInfiniteQuery({
+    initialPageParam: 0,
+    queryKey: ['participants', { commitId }],
+    queryFn: async (props) =>
+      client
+        ?.query<{
+          commitments: CommitmentGraphQL[]
+        }>(PARTICIPANTS_QUERY, {
+          where: { id_in: [commitId] },
+          first: PAGE_SIZE,
+          skip: props.pageParam,
+        })
+        .toPromise()
+        .then((r) => r.data?.commitments?.[0].participants?.map((p) => getAddress(p.address))),
+    getNextPageParam: (lastPage, allPages) => {
+      if (lastPage?.length === PAGE_SIZE) {
+        return allPages.flat().length // The next skip value is the total fetched so far
+      }
+      return undefined // No more pages
+    },
+  })
+
+  useEffect(() => {
+    if (hasNextPage && !isFetchingNextPage) {
+      fetchNextPage()
+    }
+  }, [hasNextPage, isFetchingNextPage, fetchNextPage])
+
+  return {
+    ...rest,
+    data: data?.pages.flat(),
   }
 }
 

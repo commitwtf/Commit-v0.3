@@ -5,6 +5,7 @@ import {
   useGetCommitmentDetails,
   useIsCommitCreator,
   useResolveCommitment,
+  useParticipants
 } from '@/hooks/useCommit'
 import { Checkbox } from './ui/checkbox'
 import { Label } from './ui/label'
@@ -18,7 +19,7 @@ export function ResolveCommit({ commitId = '' }) {
   const { mutateAsync, isPending } = useResolveCommitment()
   const { data, refetch } = useGetCommitmentDetails(commitId)
   const { data: deadlines } = useGetCommitmentDeadlines(commitId)
-
+const { data: participants } = useParticipants(commitId)
   const isCreator = useIsCommitCreator(commitId)
   if (data?.status !== CommitmentStatus.Created) return null
 
@@ -31,20 +32,21 @@ export function ResolveCommit({ commitId = '' }) {
 
   const winners = Object.entries(selectedWinners).filter(([_, isSelected]) => isSelected)
 
+
   return (
     <div>
       <h3 className='text-lg font-semibold mb-2'>Resolve winners</h3>
       <div className='bg-[#DCDCDC] dark:bg-[#2A2A2A] rounded-xl p-6'>
         <div className='mb-4'>
-          {data?.participants?.map((participant) => (
-            <div key={participant.address} className=''>
+          {participants?.map((participant) => (
+            <div key={participant} className=''>
               <Label className='gap-2 flex items-center py-2'>
                 <Checkbox
                   onCheckedChange={(isSelected) =>
-                    setWinners((s) => ({ ...s, [participant.address]: isSelected }))
+                    setWinners((s) => ({ ...s, [participant]: isSelected }))
                   }
                 />
-                <EnsName address={participant.address!} />
+                <EnsName address={participant!} />
               </Label>
             </div>
           ))}

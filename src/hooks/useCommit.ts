@@ -454,7 +454,7 @@ export function useParticipants(commitId: string) {
 
   return {
     ...rest,
-    data: data?.pages.flat(),
+    data: data?.pages.flat() as Address[],
   }
 }
 

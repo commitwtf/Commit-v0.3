@@ -13,7 +13,7 @@ const RewardsPage = () => {
 
   console.log(phi.data, phi.error, phi.failureReason)
 
-  const creds = (phi.data ?? []) as number[]
+  const creds = (phi.data ?? []) as number[][]
   return (
     <main className='flex-1 overflow-y-auto'>
       <div className='max-w-7xl mx-auto p-6'>
@@ -73,8 +73,9 @@ const RewardsPage = () => {
   )
 }
 
-function RewardCard({ creds, ...reward }: Reward & { creds: number[] }) {
-  const totalCreds = creds?.[1]?.[0] ?? 0
+function RewardCard({ creds, ...reward }: Reward & { creds: number[][] }) {
+  console.log(creds)
+  const totalCreds = (creds?.[1])?.[0] ?? 0
   // TODO: Verify this works for wallet with NFTs
   const progress = Math.min((totalCreds / reward.requirement) * 100, 100)
 

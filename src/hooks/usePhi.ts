@@ -81,8 +81,12 @@ export function usePhiCreds(addresses?: Address[], requiredCredentials: number =
   const data = query.data?.map((res) =>
     res.reduce((count, result) => count + (checkCount(result) ? 1 : 0), 0)
   )
-
   const completedCount = data?.filter((count) => count >= requiredCredentials).length
+  const countsForAddresses = data?.map((count, i) => ({
+    count,
+    address: addresses?.[i],
+  }))
+  console.log(countsForAddresses, countsForAddresses?.length)
 
   return { ...query, data: [completedCount, data] }
 }

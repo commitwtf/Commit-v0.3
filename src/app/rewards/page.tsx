@@ -74,11 +74,7 @@ const RewardsPage = () => {
 }
 
 function RewardCard({ creds, ...reward }: Reward & { creds: number[] }) {
-  // TODO: Testing purposes
-  // const progress = Math.min((3 / reward.requirement) * 100, 100)
-
-  const totalCreds = creds?.[0] ?? 0
-
+  const totalCreds = creds?.[1]?.[0] ?? 0
   // TODO: Verify this works for wallet with NFTs
   const progress = Math.min((totalCreds / reward.requirement) * 100, 100)
 

@@ -13,7 +13,7 @@ export const rewards: Reward[] = [
     description: 'Collect a minimum of 2 Creds from the Phi: Cyber Safari campaign',
     tokens: 1385,
     requirement: 2,
-    totalSlots: 1609,
+    totalSlots: 3000,
     commitId: '14',
   },
   {
@@ -21,8 +21,6 @@ export const rewards: Reward[] = [
     description: 'Collect a minimum of 4 Creds from the Phi: Cyber Safari campaign',
     tokens: 4155,
     requirement: 4,
-    totalSlots: 508,
-    commitId: '15',
   },
   {
     name: 'Ultimate Level Commit',

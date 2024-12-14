@@ -84,7 +84,7 @@ function RewardCard({ creds, ...reward }: Reward & { creds: number[][] }) {
 
   const status = progress === 100 ? 'Won' : 'In Progress'
 
-  const remainingSlots = reward.totalSlots ? reward.totalSlots - (commitment?.participantCount ?? 0) : undefined
+  const remainingSlots = reward.totalSlots ? reward.totalSlots - 1391 - (commitment?.participantCount ?? 0) : undefined
   const totalSlots = reward.totalSlots
 
   return (

@@ -1,6 +1,7 @@
 'use client'
 
 import { Reward, rewards } from '@/data/rewards'
+import { useGetCommitmentDetails } from '@/hooks/useCommit'
 import { usePhiCreds } from '@/hooks/usePhi'
 import { Button, Progress } from '@/src/components'
 import { Check, X, AlertCircle, ExternalLink, Users, Gift } from 'lucide-react'
@@ -74,6 +75,8 @@ const RewardsPage = () => {
 }
 
 function RewardCard({ creds, ...reward }: Reward & { creds: number[][] }) {
+  const { data: commitment } = useGetCommitmentDetails(reward.commitId ?? '')
+
   console.log(creds)
   const totalCreds = (creds?.[1])?.[0] ?? 0
   // TODO: Verify this works for wallet with NFTs
@@ -81,7 +84,7 @@ function RewardCard({ creds, ...reward }: Reward & { creds: number[][] }) {
 
   const status = progress === 100 ? 'Won' : 'In Progress'
 
-  const remainingSlots = reward.remainingSlots
+  const remainingSlots = reward.totalSlots ? reward.totalSlots - (commitment?.participantCount ?? 0) : undefined
   const totalSlots = reward.totalSlots
 
   return (

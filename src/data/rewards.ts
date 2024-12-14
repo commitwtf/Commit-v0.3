@@ -5,6 +5,7 @@ export interface Reward {
   requirement: number
   remainingSlots?: number
   totalSlots?: number
+  commitId?: string;
 }
 export const rewards: Reward[] = [
   {
@@ -12,7 +13,7 @@ export const rewards: Reward[] = [
     description: 'Collect a minimum of 2 Creds from the Phi: Cyber Safari campaign',
     tokens: 1385,
     requirement: 2,
-    totalSlots: 3000,
+    totalSlots: 1609,
     commitId: '14',
   },
   {
@@ -20,7 +21,7 @@ export const rewards: Reward[] = [
     description: 'Collect a minimum of 4 Creds from the Phi: Cyber Safari campaign',
     tokens: 4155,
     requirement: 4,
-    totalSlots: 2000,
+    totalSlots: 508,
     commitId: '15',
   },
   {

@@ -1,12 +1,12 @@
 'use client'
 
 import { Reward, rewards } from '@/data/rewards'
+import { useGetCommitmentDetails } from '@/hooks/useCommit'
 import { usePhiCreds } from '@/hooks/usePhi'
 import { Button, Progress } from '@/src/components'
 import { Check, X, AlertCircle, ExternalLink, Users, Gift } from 'lucide-react'
 import Link from 'next/link'
 import { useAccount } from 'wagmi'
-import { useGetCommitmentDetails } from '@/hooks/useCommit'
 
 const RewardsPage = () => {
   const { address } = useAccount()
@@ -75,7 +75,7 @@ const RewardsPage = () => {
 }
 
 function RewardCard({ creds, ...reward }: Reward & { creds: number[][] }) {
-  const { data: commitment } = useGetCommitmentDetails(reward.commitId)
+  const { data: commitment } = useGetCommitmentDetails(reward.commitId ?? '')
 
   console.log(creds)
   const totalCreds = (creds?.[1])?.[0] ?? 0

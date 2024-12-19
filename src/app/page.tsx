@@ -10,16 +10,11 @@ const campaigns = {
   [baseSepolia.id]: `## Featured Commits for Base Sepolia
 Some text about all the cool featured commits on Base Sepolia  
   `,
-  [cyber.id]: `## Welcome to the featured Commit page for Phi: Cyber Safari!
+  [cyber.id]: `## The next product release is on the way!
+  
 If you're new here, Commit is a protocol designed to help you commit to activities
-you're interested in, have fun with others who share similar goals, and win rewards!
-
-For the Phi: Cyber Safari campaign, there are three Commits ready for you to join! To
-participate in any Commit, please ensure you have 0.001 ETH on the Cyber mainnet for
-gas and 0.0005 WETH to join each Commit — use 'Swap tokens' on the sidebar for cross-chain bridging and swapping.
-
-We hope you have fun! To learn more about the exact steps to join and complete your
-Commit, please check the user guide [here](https://buildoncyber.notion.site/Phi-Cyber-Safari-User-Guide-1470c7ec751f80099008de1fb7f64943).
+you're interested in, have fun with others who share similar goals, and win rewards! 
+We've recently wrapped up our first-ever campaign, Phi: Cyber Safari, see the results [here](https://x.com/commitwtf/status/1869050306757271669).
     `,
 }
 

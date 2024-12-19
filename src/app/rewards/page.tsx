@@ -34,7 +34,7 @@ const RewardsPage = () => {
             <AlertCircle className='w-4 h-4' />
             <div>
               <p className='mb-1'>
-                For any commit that's completed before Dec 07, 2024, 8pm GMT+8, your rewards are now available on{' '}
+                Two waves of Phi: Cyber Safari campaign have successfully concluded! $CYBER rewards are distributed on a first-come, first served basis on{' '}
                 <Link
                   href=' https://app.galxe.com/quest/Cyber/GCFbktoYQ1'
                   target='_blank'
@@ -44,11 +44,9 @@ const RewardsPage = () => {
                   Galxe
                   <ExternalLink className='w-3 h-3 ml-1' />
                 </Link>
-                .
-              </p>
-              <p>
-                Starting Dec 8th, new users will still be able to participate in all three Commits
-                for unclaimed rewards until Dec 15, 2024. For more details, please{' '}
+                </p>
+                <p>
+                For more details, please{' '}
                 <Link
                   href='https://www.notion.so/buildoncyber/Commit-Rewards-Breakdown-1360c7ec751f80328b05c0379b8695ac'
                   target='_blank'

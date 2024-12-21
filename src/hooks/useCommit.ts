@@ -358,8 +358,7 @@ export function useCommitments(
 
 const collections = {
   [cyber.id]: {
-    featured: ['6', '7', '8'],
-    wave2: ['14', '15', '16'],
+    featured: ['6', '7', '8', '14', '15', '16'],
     hidden: ['11', '12'],
   },
   [baseSepolia.id]: {
@@ -368,9 +367,9 @@ const collections = {
   },
 }
 export function useFeaturedCommits() {
-  const { wave2 = [] } = collections[cyber.id]
+  const { featured = [] } = collections[cyber.id]
   return useCommitments({
-    where: { id_in: wave2 },
+    where: { id_in: featured },
     orderBy: 'id',
     orderDirection: 'asc',
   })
@@ -403,7 +402,7 @@ export function useJoinedCommitments(address?: Address) {
 
 export function useHasJoinedPrevious(commitId: string) {
   const { address } = useAccount()
-  const commitIndex = collections[cyber.id].wave2.indexOf(commitId)
+  const commitIndex = collections[cyber.id].featured.indexOf(commitId)
   const joinedCommit = collections[cyber.id].featured[commitIndex]
 
   const { data, ...rest } = useCommitments(

@@ -7,7 +7,7 @@ import {
   useAccount,
   useSimulateContract,
 } from 'wagmi'
-import { COMMIT_ABI } from '@/config/contract'
+import { COMMIT_ABI_V03 } from '@/config/contract'
 import { useState, useEffect } from 'react'
 import { useInfiniteQuery, useMutation, useQuery } from '@tanstack/react-query'
 import { useWaitForEvent } from './useWaitForEvent'
@@ -123,13 +123,13 @@ export function useGetCommitmentDeadlines(commitId: string) {
     contracts: [
       {
         address: contracts.protocol,
-        abi: COMMIT_ABI,
+        abi: COMMIT_ABI_V03,
         functionName: 'getCommitmentJoinDeadline',
         args: [BigInt(commitId)],
       },
       {
         address: contracts.protocol,
-        abi: COMMIT_ABI,
+        abi: COMMIT_ABI_V03,
         functionName: 'getCommitmentFulfillmentDeadline',
         args: [BigInt(commitId)],
       },
@@ -145,7 +145,7 @@ export function useGetCommitmentDeadlines(commitId: string) {
 // Create new commitment
 export function useCreateCommitment() {
   const contracts = useConfig()
-  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const waitForEvent = useWaitForEvent(COMMIT_ABI_V03)
 
   const { writeContractAsync } = useWriteContract()
   const { data: PROTOCOL_CREATE_FEE } = useProtocolCreateFee()
@@ -163,7 +163,7 @@ export function useCreateCommitment() {
         PROTOCOL_CREATE_FEE &&
         writeContractAsync({
           address: contracts.protocol,
-          abi: COMMIT_ABI,
+          abi: COMMIT_ABI_V03,
           functionName: 'createCommitment',
           args: [
             params.tokenAddress,
@@ -183,7 +183,7 @@ export function useCreateCommitment() {
 // Join commitment
 export function useJoinCommitment() {
   const contracts = useConfig()
-  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const waitForEvent = useWaitForEvent(COMMIT_ABI_V03)
   const { writeContractAsync } = useWriteContract()
   const { data: PROTOCOL_JOIN_FEE } = useProtocolJoinFee()
 
@@ -192,7 +192,7 @@ export function useJoinCommitment() {
       PROTOCOL_JOIN_FEE &&
       writeContractAsync({
         address: contracts.protocol,
-        abi: COMMIT_ABI,
+        abi: COMMIT_ABI_V03,
         functionName: 'joinCommitment',
         args: [BigInt(params.commitId)],
         value: BigInt(PROTOCOL_JOIN_FEE),
@@ -204,7 +204,7 @@ export function useProtocolJoinFee() {
   const contracts = useConfig()
   return useReadContract({
     address: contracts.protocol,
-    abi: COMMIT_ABI,
+    abi: COMMIT_ABI_V03,
     functionName: 'PROTOCOL_JOIN_FEE',
   })
 }
@@ -213,7 +213,7 @@ export function useProtocolCreateFee() {
   const contracts = useConfig()
   return useReadContract({
     address: contracts.protocol,
-    abi: COMMIT_ABI,
+    abi: COMMIT_ABI_V03,
     functionName: 'PROTOCOL_CREATE_FEE',
   })
 }
@@ -222,7 +222,7 @@ export function useCommitmentToken(commitId: string) {
   const contracts = useConfig()
   return useReadContract({
     address: contracts.protocol,
-    abi: COMMIT_ABI,
+    abi: COMMIT_ABI_V03,
     functionName: 'getCommitmentTokenAddress',
     args: [BigInt(commitId)],
   })
@@ -232,7 +232,7 @@ export function useCommitmentCreatorClaim(commitId: string) {
   const contracts = useConfig()
   return useReadContract({
     address: contracts.protocol,
-    abi: COMMIT_ABI,
+    abi: COMMIT_ABI_V03,
     functionName: 'getCommitmentCreatorClaim',
     args: [BigInt(commitId)],
   })
@@ -241,14 +241,14 @@ export function useCommitmentCreatorClaim(commitId: string) {
 // Resolve commitment
 export function useResolveCommitment() {
   const contracts = useConfig()
-  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const waitForEvent = useWaitForEvent(COMMIT_ABI_V03)
   const { writeContractAsync } = useWriteContract()
 
   return useMutation({
     mutationFn: async (params: { commitId: string; winners: Address[] }) =>
       writeContractAsync({
         address: contracts.protocol,
-        abi: COMMIT_ABI,
+        abi: COMMIT_ABI_V03,
         functionName: 'resolveCommitment',
         args: [BigInt(params.commitId), params.winners],
       }).then((hash) => waitForEvent(hash, 'CommitmentResolved')),
@@ -257,14 +257,14 @@ export function useResolveCommitment() {
 
 export function useCancelCommitment() {
   const contracts = useConfig()
-  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const waitForEvent = useWaitForEvent(COMMIT_ABI_V03)
   const { writeContractAsync } = useWriteContract()
 
   return useMutation({
     mutationFn: async (params: { commitId: string }) =>
       writeContractAsync({
         address: contracts.protocol,
-        abi: COMMIT_ABI,
+        abi: COMMIT_ABI_V03,
         functionName: 'cancelCommitment',
         args: [BigInt(params.commitId)],
       }).then((hash) => waitForEvent(hash, 'CommitmentCancelled')),
@@ -274,14 +274,14 @@ export function useCancelCommitment() {
 // Claim rewards
 export function useClaimRewards() {
   const contracts = useConfig()
-  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const waitForEvent = useWaitForEvent(COMMIT_ABI_V03)
   const { writeContractAsync } = useWriteContract()
 
   return useMutation({
     mutationFn: async (params: { commitId: string }) =>
       writeContractAsync({
         address: contracts.protocol,
-        abi: COMMIT_ABI,
+        abi: COMMIT_ABI_V03,
         functionName: 'claimRewards',
         args: [BigInt(params.commitId)],
       }).then((hash) => waitForEvent(hash, 'RewardsClaimed')),
@@ -290,14 +290,14 @@ export function useClaimRewards() {
 
 export function useClaimCreatorFee() {
   const contracts = useConfig()
-  const waitForEvent = useWaitForEvent(COMMIT_ABI)
+  const waitForEvent = useWaitForEvent(COMMIT_ABI_V03)
   const { writeContractAsync } = useWriteContract()
 
   return useMutation({
     mutationFn: async (params: { commitId: string }) =>
       writeContractAsync({
         address: contracts.protocol,
-        abi: COMMIT_ABI,
+        abi: COMMIT_ABI_V03,
         functionName: 'claimCreator',
         args: [BigInt(params.commitId)],
       }).then((hash) => waitForEvent(hash, 'CreatorClaimed')),
@@ -309,7 +309,7 @@ export function useGetCommitmentParticipants(commitId: number) {
   const contracts = useConfig()
   return useReadContract({
     address: contracts.protocol,
-    abi: COMMIT_ABI,
+    abi: COMMIT_ABI_V03,
     functionName: 'getCommitmentParticipants',
     args: [BigInt(commitId)],
   })
@@ -320,7 +320,7 @@ export function useGetCommitmentWinners(commitId: number) {
   const contracts = useConfig()
   return useReadContract({
     address: contracts.protocol,
-    abi: COMMIT_ABI,
+    abi: COMMIT_ABI_V03,
     functionName: 'getCommitmentWinners',
     args: [BigInt(commitId)],
   })

@@ -67,7 +67,7 @@ export default function CreateCommit() {
 									placeholder="10" 
 									className="flex-1 bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700" 
 								/>
-								<Select defaultValue={APPROVED_TOKENS[0].address}>
+								<Select defaultValue={ALLOWED_TOKENS[0].address}>
 									<SelectTrigger className="w-[120px] bg-[#DCDCDC] text-gray-900 border-gray-300 dark:border-gray-700">
 										<SelectValue placeholder="Token" />
 									</SelectTrigger>

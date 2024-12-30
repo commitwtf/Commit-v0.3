@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { ImageIcon } from "lucide-react"
 
-const APPROVED_TOKENS = [
+const ALLOWED_TOKENS = [
 	{ symbol: 'ETH', address: 'native', decimals: 18 },
 	{ symbol: 'USDC', address: '0x...', decimals: 6 },
 	// Add other approved tokens

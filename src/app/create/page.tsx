@@ -72,7 +72,7 @@ export default function CreateCommit() {
 										<SelectValue placeholder="Token" />
 									</SelectTrigger>
 									<SelectContent>
-										{APPROVED_TOKENS.map((token) => (
+										{ALLOWED_TOKENS.map((token) => (
 											<SelectItem key={token.address} value={token.address}>
 												{token.symbol}
 											</SelectItem>

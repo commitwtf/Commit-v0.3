@@ -1,5 +1,18 @@
+import { Kysely, PostgresDialect } from 'kysely'
 import { CommitDatabase } from '@/database/types'
-import { createKysely } from '@vercel/postgres-kysely'
+import { loadEnvConfig } from '@next/env'
+import { Pool } from 'pg'
 
-export const db = createKysely<CommitDatabase>()
+const projectDir = process.cwd()
+loadEnvConfig(projectDir)
+
+const dialect = new PostgresDialect({
+  pool: new Pool({
+    connectionString: process.env.DATABASE_URL,
+  }),
+})
+
+export const db = new Kysely<CommitDatabase>({
+  dialect,
+})
 export { sql } from 'kysely'

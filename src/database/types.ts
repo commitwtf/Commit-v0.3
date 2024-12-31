@@ -14,8 +14,8 @@ CREATE TABLE attestations (
  */
 export interface AttestationTable {
   commitment_id: string
-  attester: Address
-  participant: Address
+  attester: Address | string
+  participant: Address | string
   created_at: ColumnType<Date, string | undefined, never>
 }
 

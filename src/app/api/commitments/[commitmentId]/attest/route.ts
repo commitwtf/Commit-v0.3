@@ -1,21 +1,52 @@
+import authService from '@/app/api/auth/service'
 import { commitmentService, participantService } from '@/app/api/commitments/service'
 import { CommitmentResourceParams } from '@/app/api/commitments/types'
 import { db } from '@/database/kysely'
 import { NextRequest, NextResponse } from 'next/server'
-import { Address, getAddress } from 'viem'
+import { Address, getAddress, Hash } from 'viem'
+
+interface Payload {
+  auth: { message: string; signature: Hash }
+  attester: Address
+  attestees: Address[]
+}
 
 export const POST = async (
   request: NextRequest,
   { params }: CommitmentResourceParams
 ): Promise<NextResponse> => {
   const { commitmentId } = await params
-  const { attester, attestees } = <{ attester: Address; attestees: Address[] }>await request.json()
+
+  const account = <Address>request.headers.get('x-account')
+  const {
+    auth: { message, signature },
+    attester,
+    attestees,
+  } = <Payload>await request.json()
+
+  if (!signature || !message)
+    return new NextResponse(
+      JSON.stringify({ message: 'signature and message is required in payload' }),
+      {
+        status: 400,
+      }
+    )
+  if (!account)
+    return new NextResponse(JSON.stringify({ message: 'account is required in URL parameters' }), {
+      status: 400,
+    })
+
+  const { verified, recoveredAddr } = await authService.verify(account, message, signature)
+  if (!verified) {
+    return new NextResponse(JSON.stringify({ message: 'signature verification failed' }), {
+      status: 401,
+    })
+  }
 
   if (!commitmentId)
     return new NextResponse(JSON.stringify({ message: 'commitmentId is required' }), {
       status: 400,
     })
-
   if (!attester || !attestees)
     return new NextResponse(JSON.stringify({ message: 'attester and attestees are required' }), {
       status: 400,
@@ -26,6 +57,11 @@ export const POST = async (
     return new NextResponse(JSON.stringify({ message: 'commitment does not exist' }), {
       status: 404,
     })
+  if (commitment.creator.address.toLowerCase() !== recoveredAddr.toLowerCase())
+    return new NextResponse(
+      JSON.stringify({ message: 'attester is not the creator of the commitment' }),
+      { status: 403 }
+    )
 
   const joinedParticipants = participantService.mapParticipants(commitment.participants)
   const validParticipants = attestees.filter((attestee) =>

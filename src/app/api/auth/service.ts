@@ -5,10 +5,13 @@ class AuthService {
     accountAddr: Address,
     message: string,
     signature: `0x${string}` | Uint8Array | Signature
-  ): Promise<boolean> {
+  ): Promise<{ verified: boolean; recoveredAddr: Address }> {
     const recoveredAddr = await recoverMessageAddress({ message, signature })
 
-    return accountAddr.toLowerCase() === recoveredAddr.toLowerCase()
+    return {
+      verified: accountAddr.toLowerCase() === recoveredAddr.toLowerCase(),
+      recoveredAddr,
+    }
   }
 }
 
